@@ -23,7 +23,10 @@
     in: (k) => k * k,
     out: (k) => 1 - (1 - k) * (1 - k),
     out3: (k) => 1 - Math.pow(1 - k, 3),
-    back: (k) => 1 + 2.4 * Math.pow(k - 1, 3) + 1.4 * Math.pow(k - 1, 2),
+    back: (k) => {
+      const m = k * k * (2 - k);
+      return 1 + 2.4 * Math.pow(m - 1, 3) + 1.4 * Math.pow(m - 1, 2);
+    },
     sm: (k) => k * k * (3 - 2 * k),
   };
   const WOB = Array.from({ length: 512 }, (_, i) => Math.sin(i * 0.37) * 0.35 + Math.sin(i * 1.71 + 1) * 0.22);
@@ -50,6 +53,30 @@
     }
     return r;
   }
+  // Hands swing around the shoulder on big moves instead of sliding through the body.
+  function armArc(a, b, ca, cb, k) {
+    const straight = L2(a, b, k);
+    const va = [a[0] - ca[0], a[1] - ca[1]], vb = [b[0] - cb[0], b[1] - cb[1]];
+    const ra = Math.hypot(va[0], va[1]), rb = Math.hypot(vb[0], vb[1]);
+    if (ra < 4 || rb < 4) {
+      return straight;
+    }
+    const aa = Math.atan2(va[1], va[0]);
+    let d = Math.atan2(vb[1], vb[0]) - aa;
+    const raw = Math.abs(d);
+    const side = raw > 3.9 ? clamp((raw - 3.9) / 0.3, 0, 1) : clamp((3.9 - raw) / 0.3, 0, 1);
+    if (raw > 3.9) {
+      d -= Math.sign(d) * Math.PI * 2;
+    }
+    const w = clamp((Math.abs(d) - 0.25) / 0.45, 0, 1) * side;
+    if (w <= 0) {
+      return straight;
+    }
+    const c = L2(ca, cb, k);
+    const ang = aa + d * k, r = lerp(ra, rb, k);
+    const arc = [c[0] + Math.cos(ang) * r, c[1] + Math.sin(ang) * r];
+    return L2(straight, arc, w);
+  }
   function mix(a, b, k) {
     if (k <= 0) {
       return a;
@@ -61,6 +88,8 @@
     for (const key of PK) {
       r[key] = L2(a[key], b[key], k);
     }
+    r.hF = armArc(a.hF, b.hF, a.chest, b.chest, k);
+    r.hB = armArc(a.hB, b.hB, a.chest, b.chest, k);
     r.ef = lerp(a.ef ?? 1, b.ef ?? 1, k);
     r.eb = lerp(a.eb ?? 1, b.eb ?? 1, k);
     return r;
@@ -182,6 +211,49 @@
     const dx = hand[0] - sh[0], dy = hand[1] - sh[1];
     return [(sh[0] + hand[0]) / 2 - dy * 0.6 * f, (sh[1] + hand[1]) / 2 + dx * 0.6 * f];
   }
+  // A raised near arm that would cross the face is angled forward just enough to clear the head.
+  // Hands that stop at the face (a sip, a chin scratch) are left alone.
+  function clearHead(sh, hand, hc) {
+    const vx = hand[0] - sh[0], vy = hand[1] - sh[1];
+    const L = Math.hypot(vx, vy);
+    const wx = hc[0] - sh[0], wy = hc[1] - sh[1];
+    const Lw = Math.hypot(wx, wy);
+    const need = HEAD_R + 3;
+    if (L < 1 || Lw <= need) {
+      return hand;
+    }
+    const along = (vx * wx + vy * wy) / L;
+    const past = clamp((L - along - 2) / 8, 0, 1);
+    if (along <= 0 || past <= 0) {
+      return hand;
+    }
+    const th = Math.atan2(wy, wx), half = Math.asin(need / Lw);
+    let d = Math.atan2(vy, vx) - th;
+    while (d > Math.PI) {
+      d -= Math.PI * 2;
+    }
+    while (d < -Math.PI) {
+      d += Math.PI * 2;
+    }
+    if (d >= half || d <= -half) {
+      return hand;
+    }
+    const a = th + lerp(d, half, past * E.sm(clamp((d + half) / half, 0, 1)));
+    return [sh[0] + Math.cos(a) * L, sh[1] + Math.sin(a) * L];
+  }
+  // While a pose blends between elbow sides, the arm straightens and re-bends instead of snapping across.
+  function elbow(sh, hand, l1, l2, flip) {
+    const f = flip ?? 1;
+    const j = ik(sh, hand, l1, l2, elbowHint(sh, hand, f < 0 ? -1 : 1));
+    const m = Math.min(1, Math.abs(f));
+    if (m >= 1) {
+      return j;
+    }
+    const dx = hand[0] - sh[0], dy = hand[1] - sh[1];
+    const d = Math.hypot(dx, dy) || 1;
+    const line = [sh[0] + (dx / d) * l1, sh[1] + (dy / d) * l1];
+    return L2(line, j, E.sm(m));
+  }
 
   function strokePath(g, pts, w, col) {
     g.strokeStyle = col;
@@ -227,7 +299,7 @@
     }
     const r = Object.assign({}, p);
     const hx = p.chest[0] + 13 + Math.sin(t * 12) * 6;
-    r.hF = L2(p.hF, [hx, p.chest[1] - 40], k);
+    r.hF = armArc(p.hF, [hx, p.chest[1] - 40], p.chest, p.chest, k);
     r.ef = lerp(p.ef ?? 1, 1, k);
     r.head = L2(p.head, [p.chest[0] + 4, p.chest[1] - 26], k * 0.7);
     return r;
@@ -261,13 +333,13 @@
     const sh = [p.chest[0] - u[0], p.chest[1] - u[1]];
     const kF = ik(p.hip, p.fF, THIGH, SHIN, p.kF);
     const kB = ik(p.hip, p.fB, THIGH, SHIN, p.kB);
-    const handF = reach(sh, p.hF, UARM + FARM);
-    const handB = reach(sh, p.hB, UARM + FARM);
-    const eF = ik(sh, handF, UARM, FARM, elbowHint(sh, handF, p.ef));
-    const eB = ik(sh, handB, UARM, FARM, elbowHint(sh, handB, p.eb));
     const hd = [p.head[0] - p.chest[0], p.head[1] - p.chest[1]];
     const hl = Math.hypot(hd[0], hd[1]) || 1;
     const hc = [p.chest[0] + (hd[0] / hl) * 20.5, p.chest[1] + (hd[1] / hl) * 20.5];
+    const handF = clearHead(sh, reach(sh, p.hF, UARM + FARM), hc);
+    const handB = reach(sh, p.hB, UARM + FARM);
+    const eF = elbow(sh, handF, UARM, FARM, p.ef);
+    const eB = elbow(sh, handB, UARM, FARM, p.eb);
     const J = { sh, handF, handB, eF, eB, kF, kB, hc, hip: p.hip, chest: p.chest, fF: p.fF, fB: p.fB, hd: [hd[0] / hl, hd[1] / hl], s, sx, x, y, W };
     if (opt.behind) {
       opt.behind(g, J);
@@ -565,13 +637,18 @@
     fn();
     g.restore();
   };
+  // Idle gestures (pulse) fade back in after an action ends, so the pose never jumps.
+  let settle = 1;
+  const setSettle = (v) => {
+    settle = v;
+  };
   const pulse = (t, per, at, len, edge) => {
     const l = ((t % per) + per) % per;
     const e = edge ?? 0.25;
-    return E.soft(seg(l, at, at + len * e)) * (1 - E.soft(seg(l, at + len * (1 - e), at + len)));
+    return settle * E.soft(seg(l, at, at + len * e)) * (1 - E.soft(seg(l, at + len * (1 - e), at + len)));
   };
   const lp = (pt, x, y, sx) => toLocal(pt, x, y, FS, sx);
-  const sxv = (v) => (Math.abs(v) < 0.08 ? (v < 0 ? -0.08 : 0.08) : v);
+  const sxv = (v) => (v < 0 ? -1 : 1);
   const tri = (x) => 1 - Math.abs((((x % 2) + 2) % 2) - 1);
   const tw = (g, s, size) => {
     g.font = FONT(size || 9);
@@ -736,7 +813,7 @@
     ln(g, 9, 0, -3, 0, 1);
     g.restore();
   }
-  Object.assign(R, { inWorld, pulse, lp, sxv, tri, tw, typed, still, gait, toward, pill, pole, tick, tickBadge, win, term, stand, words, held, floatText, bubble, plane });
+  Object.assign(R, { setSettle, inWorld, pulse, lp, sxv, tri, tw, typed, still, gait, toward, pill, pole, tick, tickBadge, win, term, stand, words, held, floatText, bubble, plane });
 })();
 
 // ---------------------------------------------------------------- stage: one canvas per scene, shared clock
@@ -859,7 +936,9 @@
       const u = this.u;
       const w = this.on ? E.sm(seg(u, 0, 0.07)) * E.sm(1 - seg(u, 0.93, 1)) : 0;
       const wk = this.waveT >= 0 ? E.soft(seg(this.waveT, 0, 0.25)) * (1 - E.soft(seg(this.waveT, WAVE_DUR - 0.3, WAVE_DUR))) : 0;
+      R.setSettle(this.on ? 1 : E.sm(Math.min(1, Math.max(0, this.since / 0.8))));
       this.def.draw(g, { t: this.t, u, on: this.on, w, n: this.n, since: this.since, st: this.st, wave: wk, wt: this.waveT, hover: this.hover });
+      R.setSettle(1);
       g.restore();
       if (this.ground) {
         g.save();
@@ -1098,6 +1177,9 @@
       v.on = false;
       v.u = 0;
       v.t = o.idle ?? 0;
+    }
+    if (o.since != null) {
+      v.since = o.since;
     }
     v.resize();
     v.draw();
