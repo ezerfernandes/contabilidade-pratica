@@ -4,6 +4,8 @@
 //
 // jump              a joint teleports between two frames (a snap or twitch)
 // arm-through-face  the near arm passes through the head
+// bent-back-elbow   an elbow bends the wrong way (the forearm folds backwards)
+// elbow-out-back    the upper arm swings back and the forearm folds forward to a low hand (a broken wing)
 // squash            a figure is squashed sideways (turn it with sx = ±1 instead)
 // skate             both planted feet slide along the ground
 // reach-short       the hand is aimed at something past the arm's reach
@@ -142,6 +144,16 @@ F.forEach((fr, i) => {
     }
     if (segDist(f.hc, f.eF, f.handF) < HEAD_R - 1.5 || segDist(f.hc, f.sh, f.eF) < HEAD_R - 2.5) {
       add('arm-through-face', fr.T, `fig${k}`);
+    }
+    for (const [e, h, name] of [[f.eF, f.handF, 'front'], [f.eB, f.handB, 'back']]) {
+      const u = [e[0] - f.sh[0], e[1] - f.sh[1]], v = [h[0] - e[0], h[1] - e[1]];
+      const lu = Math.hypot(u[0], u[1]), lv = Math.hypot(v[0], v[1]);
+      if (lu > 1 && lv > 1 && (u[0] * v[1] - u[1] * v[0]) / (lu * lv) > 0.3) {
+        add('bent-back-elbow', fr.T, `fig${k} ${name} arm`);
+      }
+      if (lu > 1 && lv > 1 && u[0] / lu < -0.55 && v[0] / lv > 0.25 && v[1] > 0) {
+        add('elbow-out-back', fr.T, `fig${k} ${name} arm`);
+      }
     }
     if (fr.phase === 'act' && f.wantF > ARM + 10) {
       add('reach-short', fr.T, `fig${k} by ${(f.wantF - ARM).toFixed(0)}`);
