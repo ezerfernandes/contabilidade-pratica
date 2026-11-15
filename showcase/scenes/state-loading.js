@@ -96,12 +96,12 @@
 
       machine(g, fill, flash, a, t);
       bell(g, ding);
-      fig(g, pose, ME, 0, { wave: S.wave, wt: S.wt });
       ln(g, AXLE[0], AXLE[1], knob[0], knob[1], 3);
       circle(g, AXLE[0], AXLE[1], 2.6);
       inkFill(g, C.paper, 1.2);
       circle(g, knob[0], knob[1], 3.4);
       inkFill(g, C.wood, 1.2);
+      fig(g, pose, ME, 0, { wave: S.wave, wt: S.wt });
       sparks(g, BELL[0], BELL[1] - 16, ding, 12, 5, C.amber);
     },
   };

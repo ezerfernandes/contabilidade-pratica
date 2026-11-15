@@ -131,7 +131,7 @@
           const w = walkSeg(T, 0.5, 2.3, -130, -26);
           x = w.x;
           tipX = x + 30;
-          pose = legs(SWIPE(tipX, x), w.ph, w.amp);
+          pose = legs(SWIPE(tipX, x), w.ph, w.amp, { stride: w.stride });
           hl1 = (tipX - TX0) / (TX1 - TX0);
           mk = 1;
         } else if (T < 3.05) {
@@ -157,7 +157,7 @@
           const w = walkSeg(T, 5.1, 6.1, -26, -130);
           x = w.x;
           sx = -1;
-          pose = legs(HOLD, w.ph, w.amp);
+          pose = legs(HOLD, w.ph, w.amp, { stride: w.stride });
         } else {
           sx = turn(T, 6.1, 6.4, -1);
           pose = mix(HOLD, breathe(HOLD, S.t), seg(T, 6.4, 6.8));
@@ -332,7 +332,7 @@
       }
       const drop = T >= 0 ? seg(T, 4.9, 5.25) : 1;
       let x = -122, pose;
-      const REST = P({ hF: lp([-91, -57], -122, 0), hB: [-9, -58], head: [6, -116], chest: [3, -90], eb: -1 });
+      const REST = P({ hF: lp([-91, -57], -122, 0), hB: [-3, -51], head: [6, -116], chest: [3, -90] });
       const PUSH = (xx, b) => P({ hip: [-2, -57], chest: [9, -87], head: [17, -110], hF: lp([b - 11, -50], xx, 0), hB: lp([b - 11, -44], xx, 0), fF: [16, -2.5], fB: [-14, -2.5] });
       const WATCH = (lk) => P({ hF: [8, -56], hB: [-4, -54], head: [6 + lk * 4, -116 - lk * 2] });
       if (T < 0) {
@@ -344,7 +344,7 @@
       } else if (T < 0.9) {
         const w = walkSeg(T, 0.35, 0.9, -122, -100);
         x = w.x;
-        pose = legs(PUSH(x, bx), w.ph, w.amp * 0.6);
+        pose = legs(PUSH(x, bx), w.ph, w.amp * 0.6, { stride: w.stride });
       } else {
         const w = walkSeg(T, 4.6, 5.1, -100, -122);
         x = w.x;
@@ -353,7 +353,7 @@
         pose = mix(PUSH(-100, -58), breathe(WATCH(lk), S.t), E.soft(seg(T, 0.9, 1.3)));
         pose = mix(pose, P({ hF: [12, -134], hB: [-4, -54], head: [8, -119] }), cheer);
         pose = mix(pose, breathe(REST, S.t), E.soft(seg(T, 5.15, 5.6)));
-        pose = legs(pose, w.ph, w.amp * 0.7);
+        pose = legs(pose, w.ph, w.amp * 0.7, { stride: w.stride });
       }
       fig(g, pose, x, 0, { wave: S.wave, wt: S.wt });
       if (T < 0 || T < 4.3) {
@@ -477,7 +477,7 @@
         const w2 = walkSeg(T, o.out[0], o.out[1], o.x1, o.x0);
         if (T < o.in[1]) {
           x = w1.x;
-          pose = legs(o.hold(T), w1.ph, w1.amp);
+          pose = legs(o.hold(T), w1.ph, w1.amp, { stride: w1.stride });
         } else if (T < o.out[0]) {
           x = o.x1;
           sx = T < o.out[0] - 0.25 ? -1 : turn(T, o.out[0] - 0.25, o.out[0], -1);
@@ -485,7 +485,7 @@
         } else {
           x = w2.x;
           sx = 1;
-          pose = legs(o.hold(T), w2.ph, w2.amp);
+          pose = legs(o.hold(T), w2.ph, w2.amp, { stride: w2.stride });
         }
         return { x, sx, pose, a: vis(x) };
       };
@@ -609,12 +609,12 @@
           jy = -110 + E.soft(seg(T, 5.4, 6.0)) * 14;
         }
         if (T < 0.7) {
-          const w = walkSeg(T, 0, 0.7, -60, -22);
+          const w = walkSeg(T, 0, 0.7, -60, -30);
           x = w.x;
-          pose = legs(READ, w.ph, w.amp);
+          pose = legs(READ, w.ph, w.amp, { stride: w.stride });
           sheet = 'hand';
         } else if (T < 1.25) {
-          x = -22;
+          x = -30;
           const up = E.soft(seg(T, 0.7, 0.95)), dn = E.in(seg(T, 0.95, 1.2));
           pose = mix(READ, FEED(lerp(-96, -84, dn), x), up);
           sheet = 'hand';
@@ -624,11 +624,11 @@
             sheetIn = [hw[0] + 14, hw[1] - 14];
           }
         } else if (T < 1.5) {
-          x = -22;
+          x = -30;
           sheetIn = [18, lerp(-98, -40, E.in(seg(T, 1.2, 1.5)))];
           pose = mix(FEED(-84, x), P({ hF: lp(knob(), x, 0), hB: [-3, -52], head: [8, -114] }), E.soft(seg(T, 1.25, 1.5)));
         } else if (T < 2.9) {
-          x = -22;
+          x = -30;
           const k = E.io(seg(T, 1.5, 2.8));
           ca = -Math.PI / 2 + k * TAU * 2.5;
           gear = S.t * 0.4 + k * 14;
@@ -636,7 +636,7 @@
           light = Math.sin(T * 20) > 0;
           pose = P({ hF: lp(knob(), x, 0), hB: [-3, -52], head: [8, -114], chest: [3 + Math.cos(ca) * 1.5, -90] });
         } else if (T < 3.7) {
-          x = -22;
+          x = -30;
           ca = Math.PI / 2;
           gear = S.t * 0.4 + 14;
           light = true;
@@ -646,9 +646,9 @@
         } else if (T < 4.3) {
           ca = Math.PI / 2;
           gear = S.t * 0.4 + 14;
-          const w = walkSeg(T, 3.7, 4.3, -22, -60);
+          const w = walkSeg(T, 3.7, 4.3, -30, -60);
           x = w.x;
-          pose = legs(P({ hF: [10, -60], hB: [-3, -52], head: [5, -116] }), -w.ph, w.amp);
+          pose = legs(P({ hF: [10, -60], hB: [-3, -52], head: [5, -116] }), -w.ph, w.amp, { stride: w.stride });
         } else {
           ca = Math.PI / 2;
           gear = S.t * 0.4 + 14;
@@ -700,16 +700,16 @@
     g.save();
     g.translate(cx, cy);
     g.rotate(rot || 0);
-    rr(g, -27, -16, 54, 32, 3);
+    rr(g, -29, -19, 58, 38, 3);
     inkFill(g, done > 0.5 ? C.green : C.paper, 1.3, done > 0.5 ? C.greenInk : C.ink);
-    text(g, 'Promise', 0, -4, 9, done > 0.5 ? C.greenInk : '#3d3d3d');
+    text(g, 'Promise', 0, -3.5, 9, done > 0.5 ? C.greenInk : '#3d3d3d');
     if (done > 0.5) {
-      text(g, 'value: 3', -3, 9.5, 9, C.greenInk);
-      tick(g, 20, 6, 0.55, 1);
+      text(g, 'value: 3', -3, 11, 9, C.greenInk);
+      tick(g, 20, 7.5, 0.55, 1);
     } else {
-      text(g, 'pending', -4, 9.5, 9, C.amber);
+      text(g, 'pending', -4, 11, 9, C.amber);
       for (let i = 0; i < 3; i++) {
-        circle(g, 17 + i * 3.4, 7, 0.9 + Math.max(0, Math.sin(t * 7 - i * 0.9)) * 0.7);
+        circle(g, 17 + i * 3.4, 8.5, 0.9 + Math.max(0, Math.sin(t * 7 - i * 0.9)) * 0.7);
         g.fillStyle = C.amber;
         g.fill();
       }
@@ -987,14 +987,14 @@
       const T = S.on ? S.u * this.dur : -1;
       const n = S.n, L = PB.posts.length;
       const WRITE = (t) => P({ hB: [18, -80], hF: [24 + Math.sin(t * 9) * 3, -82 + Math.sin(t * 13) * 1.5], head: [8, -112] });
-      const BEND = (xx) => P({ hip: [-3, -57], chest: [11, -82], head: [20, -103], hB: lp([-44, -42], xx, 0), hF: [10, -60], fF: [14, -2.5], fB: [-12, -2.5] });
+      const BEND = (xx) => P({ hip: [-3, -57], chest: [11, -82], head: [20, -103], hB: lp([-44, -42], xx, 0), hF: [14, -44], ef: 0.4, fF: [14, -2.5], fB: [-12, -2.5] });
       let x = -112, pose, sheet = 'hand', sheetFall = -1, slide = 0, bolt = -1, sheetA = 1;
       if (T < 0) {
         pose = breathe(WRITE(S.t), S.t, 0.6);
       } else if (T < 0.6) {
         const w = walkSeg(T, 0, 0.6, -112, -84);
         x = w.x;
-        pose = legs(WRITE(0), w.ph, w.amp);
+        pose = legs(WRITE(0), w.ph, w.amp, { stride: w.stride });
       } else if (T < 1.4) {
         x = -84;
         pose = mix(mix(WRITE(0), BEND(x), E.soft(seg(T, 0.6, 0.95))), breathe(P({ hF: [8, -58], hB: [-4, -54], head: [9, -116] }), S.t), E.soft(seg(T, 1.05, 1.4)));
@@ -1011,7 +1011,7 @@
         const w = walkSeg(T, 3.3, 4.0, -84, -112);
         x = w.x;
         sheet = null;
-        pose = legs(P({ hF: [8, -58], hB: [-4, -54], head: [6, -116] }), -w.ph, w.amp);
+        pose = legs(P({ hF: [8, -58], hB: [-4, -54], head: [6, -116] }), -w.ph, w.amp, { stride: w.stride });
       } else {
         sheetA = E.soft(seg(T, 4.0, 4.5));
         pose = mix(P({ hF: [8, -58], hB: [-4, -54], head: [6, -116] }), breathe(WRITE(S.t), S.t, 0.6), E.soft(seg(T, 4.0, 4.6)));
@@ -1263,7 +1263,7 @@
         if (T < 1.0) {
           pose = mix(P({ hF: [12, -60], hB: [-3, -53], head: [9, -114] }), KEY(T, 1), E.soft(seg(T, 0, 0.2)));
         } else if (T < 1.7) {
-          pose = mix(KEY(T, 0), hit, E.soft(seg(T, 1.0, 1.08)));
+          pose = mix(KEY(T, 0), hit, E.soft(seg(T, 1.0, 1.16)));
         } else {
           const cheer = E.soft(seg(T, 3.45, 3.8)) * (1 - E.soft(seg(T, 4.3, 4.6)));
           pose = breathe(mix(mix(hit, admire, E.soft(seg(T, 1.7, 2.1))), P({ hF: [14, -132], hB: [-3, -53], head: [11, -119] }), cheer), S.t, 0.6);
@@ -1388,7 +1388,7 @@
         if (T < 0.75) {
           const w = walkSeg(T, 0, 0.75, -104, -58);
           x = w.x;
-          pose = legs(HOLD, w.ph, w.amp);
+          pose = legs(HOLD, w.ph, w.amp, { stride: w.stride });
         } else if (T < 1.4) {
           x = -58;
           pose = mix(HOLD, SWIPE(E.soft(seg(T, 0.85, 1.05)), x), E.soft(seg(T, 0.75, 0.9)) * (1 - E.soft(seg(T, 1.15, 1.4))));
@@ -1404,7 +1404,7 @@
         } else if (T < 4.6) {
           const w = walkSeg(T, 3.0, 4.6, -58, 148);
           x = w.x;
-          pose = legs(cheer, w.ph, w.amp);
+          pose = legs(cheer, w.ph, w.amp, { stride: w.stride });
           alpha = 1 - seg(x, 128, 148);
         } else {
           pose = breathe(HOLD, S.t);
@@ -1566,7 +1566,7 @@
           item = 'cookie';
           const w = walkSeg(T, 1.6, 2.8, -102, 24);
           x = w.x;
-          pose = legs(HOLD, w.ph, w.amp);
+          pose = legs(HOLD, w.ph, w.amp, { stride: w.stride });
         } else if (T < 4.9) {
           x = 24;
           item = 'cookie';
@@ -1582,7 +1582,7 @@
           x = w.x;
           sx = -1;
           item = 'cookie';
-          pose = legs(HOLD, w.ph, w.amp);
+          pose = legs(HOLD, w.ph, w.amp, { stride: w.stride });
         } else {
           sx = turn(T, 6.4, 6.65, -1);
           item = T < 6.6 ? 'cookie' : 'card';
@@ -1698,10 +1698,10 @@
         pose = breathe(HOVER, S.t, 0.6);
         pose.head = [8 + pulse(S.t, 6, 3, 1.5) * 4, -114];
       } else {
-        const up = E.soft(seg(T, 0, 0.4)), slam = E.in(seg(T, 0.4, 0.55)), off = E.soft(seg(T, 0.8, 1.2));
+        const up = E.soft(seg(T, 0, 0.4)), slam = E.in(seg(T, 0.4, 0.65)), off = E.soft(seg(T, 0.8, 1.2));
         press = slam * (1 - E.soft(seg(T, 0.7, 0.9)));
         const hand = [-116, lerp(lerp(-72, -104, up), -64, slam)];
-        const cheer = E.back(seg(T, 3.1, 3.4)) * (1 - E.soft(seg(T, 4.0, 4.3)));
+        const cheer = E.back(seg(T, 3.0, 3.6)) * (1 - E.soft(seg(T, 4.0, 4.3)));
         pose = mix(P({ hF: lp(hand, x, 0), hB: [-4, -53], head: [8, -116], chest: [3 + slam * 2, -90] }), breathe(P({ hF: [10, -58], hB: [-4, -53], head: [9, -116] }), S.t, 0.6), off);
         pose = mix(pose, P({ hF: [12, -132], hB: [-6, -130], head: [8, -119] }), cheer);
         if (T >= 4.6) {
@@ -1769,7 +1769,7 @@
       g.closePath();
       inkFill(g, C.red, 1.4, C.redInk);
       if (T >= 0) {
-        sparks(g, BTN[0], -62, seg(T, 0.52, 1.0), 12, 5, C.amber);
+        sparks(g, BTN[0], -62, seg(T, 0.62, 1.1), 12, 5, C.amber);
       }
       fig(g, pose, x, 0, { wave: S.wave, wt: S.wt });
     },
@@ -1830,7 +1830,7 @@
       const TYPE = (t, k) => P({ hF: lp([-50 + Math.sin(t * 23) * 2 * k, -56 - Math.max(0, Math.sin(t * 23)) * 3 * k], x, 0, -1), hB: lp([-58 + Math.sin(t * 19) * 2 * k, -55 - Math.max(0, Math.sin(t * 19 + 1)) * 3 * k], x, 0, -1), head: [8, -113], chest: [3, -89] });
       const CATCH = P({ hF: lp([-62, -98], x, 0, -1), hB: [-4, -53], head: [9, -116], chest: [3, -90] });
       const HOLDB = P({ hF: [20, -80], hB: [-4, -53], head: [7, -115] });
-      const WIND = P({ hF: [-20, -62], hB: [12, -60], head: [3, -116], chest: [-3, -90] });
+      const WIND = P({ hF: [-26, -56], hB: [12, -60], head: [3, -116], chest: [-3, -90], ef: 0 });
       const THROW = P({ hF: [36, -100], hB: [-6, -56], head: [12, -114], chest: [6, -89] });
       let sx = -1, pose, typed = 0, rows = 0, bill = null, fly = -1, msg = 0, react = 0, oldUp = 0, clear = 0;
       if (T < 0) {
@@ -2009,7 +2009,7 @@
           cylH = E.back(seg(T, 2.7, 3.2));
           rowsK = seg(T, 3.2, 3.9);
         }
-        const cheer = E.back(seg(T, 2.7, 3.0)) * (1 - E.soft(seg(T, 3.7, 4.1)));
+        const cheer = E.back(seg(T, 2.62, 3.15)) * (1 - E.soft(seg(T, 3.7, 4.1)));
         const lean = lerp(1, -0.6, E.soft(seg(T, 0.6, 1.0)));
         pose = mix(REST, P({ hF: lp(T < 1.05 ? knob() : knobAt(DNA), x, 0, sx), hB: [-4, -53], head: [9 + lean * 7, -114 + Math.abs(lean) * 1.5], chest: [2 + lean * 6, -90] }), hold);
         pose = mix(pose, P({ hF: [10, -58], hB: [-6, -132], head: [8, -119] }), cheer);
@@ -2101,7 +2101,7 @@
       const T = S.on ? S.u * this.dur : -1;
       const x = -86, n = S.n;
       const top = AM.rail + 8;
-      const ADMIRE = (t) => P({ hF: [-8, -60], hB: [-12, -62], head: [7 + Math.sin(t * 0.9) * 2, -116 - Math.max(0, Math.sin(t * 0.9)) * 3], ef: -1, eb: -1 });
+      const ADMIRE = (t) => P({ hF: [4, -50], hB: [-3, -50], head: [7 + Math.sin(t * 0.9) * 2, -116 - Math.max(0, Math.sin(t * 0.9)) * 3], ef: 0.4 });
       const BEND = P({ hip: [-3, -55], chest: [12, -80], head: [21, -101], hF: lp([-60, -36], x, 0), hB: lp([-65, -34], x, 0), fF: [14, -2.5], fB: [-12, -2.5] });
       const HANG = (c) => P({ hF: lp([c[0] - 10, c[1] + 26], x, 0), hB: lp([c[0] - 17, c[1] + 30], x, 0), head: [9, -118], chest: [2, -90] });
       const CHIN = P({ hF: [10, -98], hB: [-6, -58], head: [8, -118] });

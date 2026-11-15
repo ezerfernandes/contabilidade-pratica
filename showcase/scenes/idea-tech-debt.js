@@ -5,7 +5,7 @@
   const { C, E, P, mix, legs, walkSeg, fig, inkFill, rr, ln, text, seg, breathe, pulse, lp, sparks, tickBadge, arcPt, lerp } = R;
 
   const BENCH = { x: -150, w: 60, top: -40 };
-  const PLANK = { w: 84, h: 9 };
+  const PLANK = { w: 84, h: 13 };
   const PILE = { w: 50, h: 22 };
   const TOWER = { x: 92, w: 56, h: 24 };
   const BASE_CRATES = ['auth', 'api'];
@@ -100,13 +100,13 @@
 
         for (let i = 0; i < 3; i++) {
           const a = THROW(i);
-          const reachK = E.soft(seg(T, a, a + 0.25)) * (1 - E.soft(seg(T, a + 0.3, a + 0.45)));
+          const reachK = E.soft(seg(T, a, a + 0.25)) * (1 - E.soft(seg(T, a + 0.28, a + 0.5)));
           if (T >= a && T < a + 0.35) {
             face = -1;
           }
           const pileTop = BENCH.top - PLANK.h - (2 - i) * PILE.h - PILE.h / 2;
           pose = mix(pose, P({ hF: lp([BENCH.x + 20, pileTop], x, 0, -1), hB: lp([BENCH.x + 16, pileTop + 6], x, 0, -1), head: [9, -114], chest: [3, -90] }), reachK);
-          pose = mix(pose, HOLD, E.soft(seg(T, a + 0.32, a + 0.5)) * (1 - E.soft(seg(T, a + 0.55, a + 0.7))));
+          pose = mix(pose, HOLD, E.soft(seg(T, a + 0.28, a + 0.52)) * (1 - E.soft(seg(T, a + 0.55, a + 0.7))));
           pose = mix(pose, TOSS, E.soft(seg(T, a + 0.52, a + 0.72)) * (1 - E.soft(seg(T, a + 0.8, a + 1.0))));
           taken[i] = T >= a + 0.3;
           if (T >= a + 0.3 && T < a + 0.62) {
@@ -122,7 +122,7 @@
         const wob = E.soft(seg(T, 3.4, 3.8)) * (1 - E.soft(seg(T, 5.0, 5.6)));
         sway = Math.sin((T - 3.4) * Math.PI * 2 * 1.4) * wob;
         slip = E.out3(seg(T, 4.15, 4.4));
-        pose = mix(pose, WHOA, E.back(seg(T, 4.17, 4.42)) * (1 - E.soft(seg(T, 4.75, 5.0))));
+        pose = mix(pose, WHOA, E.back(seg(T, 4.12, 4.52)) * (1 - E.soft(seg(T, 4.75, 5.0))));
         pose = mix(pose, EASY, E.soft(seg(T, 4.8, 5.05)) * (1 - E.soft(seg(T, 5.35, 5.6))));
         bang = seg(T, 4.25, 4.4) * (1 - seg(T, 5.2, 5.4));
         sweat = seg(T, 4.4, 5.3);
@@ -151,14 +151,14 @@
         pose = mix(pose, P({ hF: lp([BRACE_MID[0] - 3, BRACE_MID[1] - 4], x, 0, 1), hB: lp([BRACE_MID[0] - 6, BRACE_MID[1] + 6], x, 0, 1), head: [10, -112], chest: [5, -88] }), push);
         straight = E.soft(seg(T, 7.3, 7.9));
         tickK = seg(T, 7.85, 8.25) * fade;
-        pose = mix(pose, CHEER, E.back(seg(T, 7.95, 8.22)) * (1 - E.soft(seg(T, 8.32, 8.6))));
+        pose = mix(pose, CHEER, E.soft(seg(T, 7.85, 8.3)) * (1 - E.soft(seg(T, 8.32, 8.6))));
 
         pileBack = seg(T, 8.9, 9.45);
         if (pileBack > 0) {
           plankA = pileBack;
         }
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
       setStep(g, step);
 
       bench(g);

@@ -93,7 +93,7 @@
         const sweepL = E.soft(seg(T, 0.55, 1.35));
         const sweepR = E.soft(seg(T, 1.6, 2.3));
         const peek = E.soft(seg(T, 3.0, 3.3)) * (1 - E.soft(seg(T, 4.0, 4.25)));
-        const shrug = E.back(seg(T, 4.25, 4.5)) * (1 - E.soft(seg(T, 4.9, 5.1)));
+        const shrug = E.back(seg(T, 4.2, 4.6)) * (1 - E.soft(seg(T, 4.9, 5.1)));
         const point = E.soft(seg(T, 5.3, 5.55)) * (1 - E.soft(seg(T, 6.0, 6.2)));
         aim = lerp(0.55, 0, up);
         if (T >= 0.55 && T < 1.35) {
@@ -115,14 +115,14 @@
             aim = lerp(aim, -0.05, point);
           }
         }
-        if (T >= 4.25) {
+        if (T >= 4.2) {
           aim = lerp(aim, -0.5, shrug);
         }
         reachK = Math.max(up * (1 - E.soft(seg(T, 4.0, 4.3))), peek);
         beam = lerp(0.35, 1, up * (1 - E.soft(seg(T, 4.1, 4.4))));
         pose = aimPose(pose, aim, reachK);
         pose = mix(pose, P({ chest: [6, -86], hip: [-2, -57], head: [16, -106], kF: [26, -30], kB: [10, -30] }, pose), peek);
-        const shrugPose = P({ hF: [22, -90], hB: [-20, -90], head: [0, -118], chest: [0, -92], ef: 1, eb: -1 });
+        const shrugPose = P({ hF: [22, -90], hB: [-20, -90], head: [0, -118], chest: [0, -92], ef: 1, eb: 0.5 });
         pose = mix(pose, shrugPose, shrug);
         pose = mix(pose, P({ hF: [44, -88], hB: [-4, -54], head: [9, -116] }), point);
         const from = 1 - E.soft(seg(T, 0, 0.35));
@@ -134,7 +134,7 @@
         qK = seg(T, 4.35, 5.25);
         homeGlow = E.soft(seg(T, 5.45, 5.7)) * (1 - E.soft(seg(T, 6.4, 6.9))) * fade;
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       signpost(g);
       homeSign(g, homeGlow);

@@ -155,17 +155,19 @@
         plan = E.soft(seg(T, 0.2, 0.5)) * (1 - E.soft(seg(T, 4.6, 5.1)));
         const reachN = lp([MX.gx - 1, MX.rows[1]], -28, 0);
         const reachO = lp([MX.gx - 1, MX.rows[2]], -28, 0);
-        const pullO = lp([-26, -57], -28, 0);
-        const flick = [-12, -74];
+        const pullO = lp([-19, -58], -28, 0);
+        const flick = [-24, -62];
+        const H = (hf, ef) => P({ hF: hf, hB: [-6, -54], head: [7, -114], chest: [3, -90], ef: ef ?? 1 });
+        const KEYS = [[1.0, H(CARRY.hF)], [1.35, H(reachN)], [1.5, H(reachN)], [1.65, H([16, -62])], [1.9, H(reachO)], [2.2, H(pullO, 0.35)], [2.4, H(flick, 0)], [2.75, H([14, -58])], [3.1, H(CARRY.hF)]];
+        const rel = seq(2.3, KEYS).hF;
         const BASEP = mix(READ, CARRY, carry);
         if (T < 1.0) {
           const w = walkSeg(T, 0.3, 1.0, -72, -28);
           x = w.x;
-          pose = legs(BASEP, w.ph, w.amp);
+          pose = legs(BASEP, w.ph, w.amp, { stride: w.stride });
         } else if (T < 3.1) {
           x = -28;
-          const H = (hf) => P({ hF: hf, hB: [-6, -54], head: [7, -114], chest: [3, -90] });
-          pose = seq(T, [[1.0, H(CARRY.hF)], [1.35, H(reachN)], [1.5, H(reachN)], [1.65, H([16, -62])], [1.9, H(reachO)], [2.2, H(pullO)], [2.38, H(flick), E.out], [2.7, H([14, -58])], [3.1, H(CARRY.hF)]]);
+          pose = seq(T, KEYS);
         } else if (T < 4.3) {
           x = -28;
           sx = sxv(Math.cos(Math.PI * E.soft(seg(T, 3.1, 3.3))));
@@ -173,7 +175,7 @@
             const w = walkSeg(T, 3.3, 4.1, -28, -72);
             x = w.x;
             sx = sxv(-Math.cos(Math.PI * E.soft(seg(T, 4.1, 4.3))));
-            pose = legs(BASEP, w.ph, w.amp);
+            pose = legs(BASEP, w.ph, w.amp, { stride: w.stride });
           } else {
             pose = BASEP;
           }
@@ -188,7 +190,7 @@
           oldTab = [hw[0], hw[1], -0.1 * seg(T, 2.0, 2.3)];
         } else if (T >= 2.3) {
           const k = seg(T, 2.3, 2.9);
-          const p = arcPt([-30, -60], [-128, -4], 40, E.lin(k));
+          const p = arcPt([-28 + rel[0] * FS, rel[1] * FS], [-128, -4], 40, E.lin(k));
           oldTab = [p[0], p[1], -0.1 - k * 5.5];
           oldA = (1 - seg(T, 3.0, 3.5)) + E.soft(seg(T, 4.7, 5.2));
           if (T >= 4.7) {
@@ -302,7 +304,7 @@
       const x = -64, db = { cx: -128, top: -96, w: 56 };
       const IDLE = P({ hF: [12, -56], hB: [-4, -56], head: [4, -116] });
       const HUG = P({ hF: [18, -68], hB: [13, -66], head: [6, -114] });
-      const WIND = P({ hF: [-2, -58], hB: [-6, -56], chest: [-3, -89], head: [-3, -114], fF: [12, -2.5], fB: [-10, -2.5] });
+      const WIND = P({ hF: [2, -50], hB: [-4, -50], ef: 0.4, chest: [-3, -89], head: [-3, -114], fF: [12, -2.5], fB: [-10, -2.5] });
       const THROW = P({ hF: [28, -106], hB: [22, -102], chest: [6, -90], head: [10, -113], hip: [2, -59], fF: [14, -2.5], fB: [-12, -2.5] });
       let sx = 1, pose, boxP = null, boxA = 0, boxS = 1, n = 2, newA = 0, wob = 0, payoff = -1;
       if (T < 0) {
@@ -314,16 +316,18 @@
           sx = sxv(-Math.cos(Math.PI * E.soft(seg(T, 0.85, 1.15))));
         }
         const REACH = P({ hF: lp([-97, -60], x, 0, -1), hB: [6, -60], chest: [4, -89], head: [8, -114] });
-        pose = seq(T, [[0, IDLE], [0.3, IDLE], [0.6, REACH], [0.7, REACH], [0.95, HUG], [1.25, HUG], [1.55, WIND, E.soft], [1.72, THROW, E.in], [2.0, THROW], [2.7, IDLE]]);
-        pose = breathe(pose, S.t, 0.5);
-        const hw = [x + ((pose.hF[0] + pose.hB[0]) / 2) * FS * sx, ((pose.hF[1] + pose.hB[1]) / 2) * FS - 4];
+        const KEYS = [[0, IDLE], [0.3, IDLE], [0.6, REACH], [0.7, REACH], [0.95, HUG], [1.25, HUG], [1.55, WIND, E.soft], [1.8, THROW], [2.0, THROW], [2.7, IDLE]];
+        const handsAt = (p, s) => [x + ((p.hF[0] + p.hB[0]) / 2) * FS * s, ((p.hF[1] + p.hB[1]) / 2) * FS - 4];
+        pose = breathe(seq(T, KEYS), S.t, 0.5);
+        const hw = handsAt(pose, sx);
+        const rel = handsAt(seq(1.7, KEYS), 1);
         if (T >= 0.55 && T < 1.7) {
           boxP = hw;
           boxA = 1;
           boxS = E.back(seg(T, 0.55, 0.8));
         } else if (T >= 1.7 && T < 2.55) {
           const k = seg(T, 1.7, 2.55);
-          boxP = arcPt([x + 24, -96], [114, -60], 56, k);
+          boxP = arcPt(rel, [114, -60], 56, k);
           boxA = 1;
           boxS = 1 - k * 0.25;
           boxP.push(k * TAU * 1.25);
@@ -387,17 +391,17 @@
       const T = S.on ? S.u * this.dur : -1;
       const x = -98;
       const IDLE = P({ fF: [8, -2.5], kF: [28, -36], hF: [10, -58], hB: [-2, -57], head: [4, -116] });
-      const LIFT = P({ fF: [24, -36], kF: [36, -50], hip: [-3, -60], chest: [-4, -90], head: [-3, -116], hF: [26, -82], hB: [-20, -72] });
+      const LIFT = P({ fF: [24, -36], kF: [36, -50], hip: [-3, -60], chest: [-4, -90], head: [-3, -116], hF: [26, -82], hB: [-28, -62], eb: 0.3 });
       const press = T >= 0 ? E.out(seg(T, 0.6, 0.68)) * (1 - E.soft(seg(T, 0.95, 1.2))) : 0;
       const keyTop = -15 + press * 5;
-      const STOMP = P({ fF: lp([-50, keyTop - 1.5], x, 0), kF: [42, -46], hip: [3, -58], chest: [5, -89], head: [8, -114], hF: [26, -76], hB: [-18, -66] });
+      const STOMP = P({ fF: lp([-50, keyTop - 1.5], x, 0), kF: [42, -46], hip: [3, -58], chest: [5, -89], head: [8, -114], hF: [26, -76], hB: [-24, -60], eb: 0.3 });
       const CHEER = P({ hF: [12, -132], hB: [-4, -58], head: [5, -119] });
       let pose;
       const tap = T < 0 ? Math.max(0, Math.sin(S.t * 7)) * pulse(S.t, 4.5, 1, 1.8) : 0;
       if (T < 0) {
         pose = breathe(P({ fF: [8, -2.5 - tap * 4] }, IDLE), S.t);
       } else {
-        pose = seq(T, [[0, IDLE], [0.38, LIFT, E.out], [0.5, LIFT], [0.62, STOMP, E.in], [0.9, STOMP], [1.3, IDLE], [1.9, IDLE], [2.2, CHEER], [2.6, CHEER], [3.1, IDLE]]);
+        pose = seq(T, [[0, IDLE], [0.34, LIFT, E.out], [0.44, LIFT], [0.62, STOMP, E.in], [0.9, STOMP], [1.3, IDLE], [1.9, IDLE], [2.2, CHEER], [2.6, CHEER], [3.1, IDLE]]);
         pose = breathe(pose, S.t, 0.5);
       }
       const tx = -178, ty = -160, tw = 126, th = 56;
@@ -700,7 +704,7 @@
       }
       const ts = words.map((_, i) => 0.55 + i * 0.6);
       const LOW = P({ hF: [16, -70], hB: [-4, -56], head: [4, -116] });
-      const TALK = P({ hF: [17, -101], hB: [-4, -56], head: [6, -115], chest: [2, -90] });
+      const TALK = P({ hF: [21, -94], hB: [-4, -56], head: [6, -115], chest: [2, -90] });
       let pose, talk = 0, typed = 0, payoff = -1, fade = 1;
       if (T < 0) {
         const hum = pulse(S.t, 6, 2, 1.4);
@@ -854,14 +858,14 @@
         if (T < 0.45) {
           pose = mix(READ, push(x, 0), E.soft(seg(T, 0, 0.4)));
         } else if (T < 1.4) {
-          pose = legs(push(x, E.soft(seg(T, 0.45, 1.35))), fw.ph, fw.amp);
+          pose = legs(push(x, E.soft(seg(T, 0.45, 1.35))), fw.ph, fw.amp, { stride: fw.stride });
         } else if (T < 1.8) {
           pose = mix(push(x, 1), P({ hF: [14, -56], hB: [4, -56], head: [6, -115] }), E.soft(seg(T, 1.4, 1.8)));
         } else if (T < 3.1) {
           const clap = T > 2.95 ? 0 : 0;
           pose = P({ hF: [14 + clap, -56], hB: [4, -56], head: [8, -114 - pulse(T, 10, 1.8, 1.4) * 2] });
         } else {
-          pose = legs(P({ hF: [14, -56], hB: [4, -56] }), -bw.ph, bw.amp);
+          pose = legs(P({ hF: [14, -56], hB: [4, -56] }), -bw.ph, bw.amp, { stride: bw.stride });
           pose = mix(pose, READ, E.soft(seg(T, 3.9, 4.4)));
         }
         pose = breathe(pose, S.t, 0.5);
@@ -1169,7 +1173,7 @@
         } else if (T < 1.5) {
           const w = walkSeg(T, legsAt[0][0], legsAt[0][1], legsAt[0][2], legsAt[0][3]);
           x = w.x;
-          pose = legs(pose, w.ph, w.amp);
+          pose = legs(pose, w.ph, w.amp, { stride: w.stride });
         } else if (T < 2.0) {
           x = stops[1];
           inHand = T < 1.95 ? 1 : -1;
@@ -1177,7 +1181,7 @@
         } else if (T < 2.85) {
           const w = walkSeg(T, legsAt[1][0], legsAt[1][1], legsAt[1][2], legsAt[1][3]);
           x = w.x;
-          pose = legs(pose, w.ph, w.amp);
+          pose = legs(pose, w.ph, w.amp, { stride: w.stride });
         } else if (T < 4.5) {
           x = stops[2];
           inHand = T < 3.3 ? 2 : -1;
@@ -1189,7 +1193,7 @@
           if (T > 4.7) {
             sx = sxv(-Math.cos(Math.PI * E.soft(seg(T, 6.1, 6.35))));
           }
-          pose = legs(LOOK, w.ph, w.amp);
+          pose = legs(LOOK, w.ph, w.amp, { stride: w.stride });
         }
         pose = breathe(pose, S.t, 0.5);
         meter = T < 3.3 ? 0 : 0.42 * E.out(seg(T, 3.4, 4.2));
@@ -1312,7 +1316,8 @@
         const cr = lr(r0, r1, pk);
         const lift = -Math.sin(Math.PI * pk) * 6;
         const grip = [cr[0] + lerp(4, cr[2] - 4, pk), cr[1] + cr[3] * 0.55 - lift];
-        const CARRY = P({ hF: lp(grip, x, 0), hB: IDLE.hB, head: [6, -113], chest: [2, -90] });
+        const gl = lp(grip, x, 0);
+        const CARRY = P({ hF: gl, hB: IDLE.hB, head: [6, -113], chest: [2, -90], ef: lerp(0.15, 1, E.sm(clamp((gl[0] - 2) / 16, 0, 1))) });
         if (T < 1.3) {
           pose = seq(T, [[0, IDLE], [0.6, IDLE], [0.95, GRAB], [1.3, GRAB]]);
         } else if (T < 2.2) {

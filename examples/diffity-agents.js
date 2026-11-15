@@ -184,7 +184,7 @@
         let bp = breathe(P({ hF: [10, -58], hB: [-6, -56], head: [3, -117] }), t + b.x);
         bp = mix(bp, P({ hF: [10, -58], hB: [-6, -56], head: [-1, -119] }), look);
         if (me && T >= 0) {
-          bp = mix(bp, P({ hF: [14, -132], hB: [-10, -130], head: [3, -118] }), E.back(seg(T, 3.7, 3.95)) * (1 - E.soft(seg(T, 5.0, 5.4))));
+          bp = mix(bp, P({ hF: [14, -132], hB: [-10, -130], head: [3, -118] }), E.back(seg(T, 3.62, 4.15)) * (1 - E.soft(seg(T, 5.0, 5.4))));
         }
         const glow = me ? Math.max(power, lit * 0.4) : 0;
         fig(g, bp, b.x, -8 - (me ? hop : 0), {
