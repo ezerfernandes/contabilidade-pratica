@@ -1,4 +1,4 @@
-/* stick-scenes runtime: the rig (figure, poses, easing, pen), a kit of props, and the <stick-scene> element. No dependencies. */
+/* stick-scene runtime: the rig (figure, poses, easing, pen), a kit of props, and the <stick-scene> element. No dependencies. */
 (function () {
   const C = {
     ink: '#141414', far: '#9a9a9a', muted: '#737373', soft: '#a3a3a3', faint: '#d4d4d4', line: '#ededed', paper: '#ffffff', floor: '#fafafa',

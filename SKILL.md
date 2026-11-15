@@ -1,9 +1,9 @@
 ---
-name: stick-scenes
+name: stick-scene
 description: Make small hand-drawn stick-figure scenes for landing pages and sites, where a stick figure works a machine or prop that shows what a product does (pull a lever, pin a note, stamp a page). Each one is an interactive canvas widget, `<stick-scene>`, that idles quietly and plays one short action on click, hover or scroll into view. Use when the user asks for a stick figure animation, a "worker" or "crew" scene, an animated explainer or doodle widget for a landing page, something "like the stick figures on my story page", or wants a product's feature shown as a little animated scene.
 ---
 
-# Stick scenes
+# Stick scene
 
 A stick figure in Kamran's ink-and-butter style does one job that shows what a product does. The scene idles (breathes, glances, scratches its chin) and plays one 5–8 second action when triggered, then settles back. It is one `<canvas>` inside a `<stick-scene>` element, with no dependencies.
 

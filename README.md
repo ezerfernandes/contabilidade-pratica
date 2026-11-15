@@ -1,6 +1,6 @@
 <img src=".github/logo.png" width="110" alt="">
 
-# /stick-scenes
+# /stick-scene
 
 Skill to make your agent draw little stick-figure scenes that show what your product does.
 
@@ -13,18 +13,18 @@ Each scene is one `<canvas>` with no dependencies. It idles quietly, breathing a
 Install the skill
 
 ```bash
-npx skills add nilbuild/stick-scenes
+npx skills add nilbuild/stick-scene
 ```
 
 Then ask your agent
 
 ```bash
-/stick-scenes [what you want to show]
+/stick-scene [what you want to show]
 
-/stick-scenes a scene for the hero of this landing page
-/stick-scenes show that our CLI turns a YAML file into JSON
-/stick-scenes one scene for each feature section on the homepage
-/stick-scenes show an agent fixing the comments I leave on a diff
+/stick-scene a scene for the hero of this landing page
+/stick-scene show that our CLI turns a YAML file into JSON
+/stick-scene one scene for each feature section on the homepage
+/stick-scene show an agent fixing the comments I leave on a diff
 ```
 
 It reads your project, pitches two or three ideas for you to pick from, writes the scene, renders it frame by frame to check that nothing overlaps or gets cut off, and adds it to your page.
