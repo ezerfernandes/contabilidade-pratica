@@ -46,6 +46,7 @@ pose = mix(pose, REACH_POSE, reach);                                         // 
 const fade = 1 - seg(T, this.dur - 0.45, this.dur);                         // multiply results by this
 ```
 
+- **No snaps**: every joint must move continuously. Never switch a pose with a bare `if (T < x)`; blend it with `mix(a, b, E.soft(seg(T, x, x + 0.2)))`. `E.back` starts from rest and overshoots at the end, so it's safe for limbs. After an action ends, idle `pulse()` gestures fade back in over ~0.8 s by themselves.
 - **Easings** (`E`): `soft` (cosine) for body moves, `back` (overshoot) for things popping in, `out3` for things landing, `in` for slams and drops, `sm` (smoothstep).
 - **Idle life**: `breathe(pose, t)` always. Add one `pulse(t, period, at, len)` gesture, like a chin scratch, glance or sip, every 5–7 s. Keep it small.
 - **Walking**: `walkSeg(T, a, b, x0, x1)` returns `{ x, ph, amp }`. Apply it with `pose = legs(pose, ws.ph, ws.amp, { arms: false })` *after* all the mixes. To walk back, use a second `walkSeg` and pick whichever one covers the current `T`.
@@ -79,6 +80,10 @@ const fade = 1 - seg(T, this.dur - 0.45, this.dur);                         // m
 
 - **Touch a world point**: `hF: lp([wx, wy], x, 0, sx)`, which converts world coordinates to the figure's local ones.
 - **Face left**: `fig(g, pose, x, 0, { sx: -1 })`. The pose stays in "facing right" coordinates.
+- **Arms between poses**: `mix` swings each hand around the shoulder on big moves (more than about 15°), going round the front of the body, so raising both arms reads like a real throw-up instead of hands sliding through the face. Small moves stay straight, so `lp()` reaches still land exactly. Don't hand-animate `hF`/`hB` in a straight line for big moves; mix between poses.
+- **Elbow flips**: when a blend changes `ef`/`eb` from `1` to `-1`, the arm straightens and re-bends on the other side instead of snapping. Still, only flip an elbow when the pose needs it (an arm reaching across the body); a raised arm wants its elbow in front (`ef: 1`).
+- **Raised near arm**: `fig` nudges the near (front) arm forward when it would cross the face, so a cheer reads as a clean "Y". Hands that stop at the face (a sip, a chin scratch) are left alone. The far arm behind the head is fine.
+- **Turning around**: flip `sx` from `1` to `-1` in one frame, at the moment the figure changes direction. Never squash it through 0; that reads as a card flipping. `sxv(v)` snaps any value to `1` or `-1`, so `sx = sxv(Math.cos(Math.PI * k))` turns at the halfway point of `k`.
 - **Second figure**: `{ ink: '#d97757', far: '#e8b7a3' }`. `far` is the colour of the back limbs.
 - **Robot (AI agent)**: add `bot: { col, dark, glow, blink, happy }` to the fig options. `glow` (0..1) lights the antenna and chest; `blink` closes the eyes (`pulse(t, 4.3, 1.2, 0.15) > 0.5`); `happy` turns the eyes into arcs. House style is orange `#d97757`/`#a8553a`/far `#e8b7a3`; a second agent is teal `#3d7a8c`/`#2a5866`/far `#a9c9d1`. A dark `col` (a black agent) gets a white visor and ink eyes automatically (`screen`/`eye` override). Label it `agent` (or `claude`/`codex`) under the figure.
 - **Held objects**: `fig(..., { held: (g, J) => R.held(g, J, (hand) => drawAt(hand)) })`, or use `fig`'s return value, `J.w.handF`, in world space.
@@ -160,6 +165,8 @@ The example files define their own small helpers at the top. Most have the same 
 
 ## Mistakes already made once
 
+- Moving a hand from the hip to overhead in a straight line: it passes through the chest and face and the elbow sticks out sideways near the shoulder. Blend poses with `mix` (it arcs) and keep the raised arm's elbow in front.
+- Turning a figure by squashing `sx` smoothly through 0: for a moment it is paper-thin, like a card flipping. Snap `sx` to `1` or `-1` instead.
 - Text or a note drawn over the figure's face: draw notes after the figure only if they sit away from the head, and move them otherwise.
 - The figure standing in front of the thing it explains: put it beside the prop and let it reach.
 - Things cropped at the scene edges, or a bubble running off the right side: check `idle` and every bubble frame on the sheet.
