@@ -181,7 +181,7 @@ The example files define their own small helpers at the top. Most have the same 
 
 - Moving a hand from the hip to overhead in a straight line: it passes through the chest and face and the elbow sticks out sideways near the shoulder. Blend poses with `mix` (it arcs) and keep the raised arm's elbow in front.
 - Turning a figure by squashing `sx` smoothly through 0: for a moment it is paper-thin, like a card flipping. Snap `sx` to `1` or `-1` instead.
-- Text or a note drawn over the figure's face: draw notes after the figure only if they sit away from the head, and move them otherwise.
+- Text, a note or a held card drawn over the figure's face or across its shoulders (it reads as the figure standing behind the prop): hold props below the shoulder or beside the figure, and draw notes after the figure only if they sit away from the head. `motion.mjs` reports `head-covered` by sampling the head's pixels after each frame.
 - The figure standing in front of the thing it explains: put it beside the prop and let it reach.
 - Things cropped at the scene edges, or a bubble running off the right side: check `idle` and every bubble frame on the sheet.
 - `rr` with a radius bigger than half the width draws a squiggle: keep bars at least 8 wide, or let `rr` clamp (the runtime's `rr` already clamps).
