@@ -386,7 +386,7 @@
     draw(g, S) {
       const T = S.on ? S.u * this.dur : -1;
       const x = -98;
-      const IDLE = P({ hF: [10, -58], hB: [-2, -57], head: [4, -116] });
+      const IDLE = P({ fF: [8, -2.5], kF: [28, -36], hF: [10, -58], hB: [-2, -57], head: [4, -116] });
       const LIFT = P({ fF: [24, -36], kF: [36, -50], hip: [-3, -60], chest: [-4, -90], head: [-3, -116], hF: [26, -82], hB: [-20, -72] });
       const press = T >= 0 ? E.out(seg(T, 0.6, 0.68)) * (1 - E.soft(seg(T, 0.95, 1.2))) : 0;
       const keyTop = -15 + press * 5;
@@ -395,9 +395,9 @@
       let pose;
       const tap = T < 0 ? Math.max(0, Math.sin(S.t * 7)) * pulse(S.t, 4.5, 1, 1.8) : 0;
       if (T < 0) {
-        pose = breathe(P({ fF: [8, -2.5 - tap * 4], kF: [28, -36] }, IDLE), S.t);
+        pose = breathe(P({ fF: [8, -2.5 - tap * 4] }, IDLE), S.t);
       } else {
-        pose = seq(T, [[0, IDLE], [0.38, LIFT, E.out], [0.5, LIFT], [0.62, STOMP, E.in], [0.9, STOMP], [1.3, IDLE], [1.9, IDLE], [2.15, CHEER, E.out], [2.6, CHEER], [3.1, IDLE]]);
+        pose = seq(T, [[0, IDLE], [0.38, LIFT, E.out], [0.5, LIFT], [0.62, STOMP, E.in], [0.9, STOMP], [1.3, IDLE], [1.9, IDLE], [2.2, CHEER], [2.6, CHEER], [3.1, IDLE]]);
         pose = breathe(pose, S.t, 0.5);
       }
       const tx = -178, ty = -160, tw = 126, th = 56;
@@ -620,14 +620,14 @@
           if (T >= t0 - 0.1 && T < t0 + 0.7) {
             const k = seg(T, t0 + 0.08, t0 + 0.45);
             const lift = seg(T, t0 + 0.45, t0 + 0.65);
-            finger = [10 + lift * 4, lerp(-62, -108, E.io(k)) + lift * 46 * E.soft(lift)];
+            finger = [10 + Math.sin(Math.PI * lift) * 4, lerp(-62, -108, E.io(k)) + lift * 46 * E.soft(lift)];
           }
         }
-        if (T >= 2.85) {
+        if (T >= 2.55) {
           const k = seg(T, 2.85, 3.0), k2 = seg(T, 3.05, 3.2);
-          finger = [12, -94 + Math.sin(Math.PI * k) * 4 + Math.sin(Math.PI * k2) * 4];
+          finger = L2([10, -108], [12, -94], E.soft(seg(T, 2.55, 2.85)));
+          finger[1] += Math.sin(Math.PI * k) * 4 + Math.sin(Math.PI * k2) * 4;
           tap = Math.sin(Math.PI * k) + Math.sin(Math.PI * k2);
-          finger[1] -= 0;
         }
         if (T >= 3.5) {
           finger = L2([12, -94], [10, -62], E.soft(seg(T, 3.5, 3.9)));
@@ -847,10 +847,10 @@
       if (T < 0) {
         pose = breathe(P({ head: [7 + Math.sin(S.t * 0.9) * 1.5, -113] }, READ), S.t, 0.7);
       } else {
-        const fw = walkSeg(T, 0.45, 1.2, -128, -102);
-        const bw = walkSeg(T, 3.1, 3.7, -102, -128);
+        const fw = walkSeg(T, 0.45, 1.2, -128, -84);
+        const bw = walkSeg(T, 3.1, 3.8, -84, -128);
         x = T < 3.1 ? fw.x : bw.x;
-        const push = (xx, k) => P({ hF: lp([lerp(-110, mx - 6, k), slotY], xx, 0), hB: lp([lerp(-116, mx - 12, k), slotY + 1], xx, 0), head: [7, -114], chest: [3, -90] });
+        const push = (xx, k) => P({ hF: lp([lerp(-110, mx - 12, k), slotY], xx, 0), hB: lp([lerp(-116, mx - 18, k), slotY + 1], xx, 0), head: [7, -114], chest: [3, -90] });
         if (T < 0.45) {
           pose = mix(READ, push(x, 0), E.soft(seg(T, 0, 0.4)));
         } else if (T < 1.4) {
@@ -861,7 +861,7 @@
           const clap = T > 2.95 ? 0 : 0;
           pose = P({ hF: [14 + clap, -56], hB: [4, -56], head: [8, -114 - pulse(T, 10, 1.8, 1.4) * 2] });
         } else {
-          pose = legs(P({ hF: [14, -56], hB: [4, -56] }), bw.ph, bw.amp);
+          pose = legs(P({ hF: [14, -56], hB: [4, -56] }), -bw.ph, bw.amp);
           pose = mix(pose, READ, E.soft(seg(T, 3.9, 4.4)));
         }
         pose = breathe(pose, S.t, 0.5);
@@ -933,7 +933,7 @@
           }
           inWorld(gg, J2, () => {
             const h = J2.W(J2.handF);
-            const sl = [h[0] - 4, h[1] - 2];
+            const sl = [h[0] - 4 + (T >= 0 && T < 1.4 ? E.in(seg(T, 1.25, 1.4)) * 26 : 0), h[1] - 2];
             gg.save();
             gg.globalAlpha *= stripA;
             gg.beginPath();
@@ -996,7 +996,7 @@
       const v = 78, puts = [0.3, 0.95, 1.6];
       const IDLE = P({ hF: [14, -60], hB: [6, -62], head: [6, -115] });
       const PUT = P({ hF: lp([belt.x0 + 6, belt.y - 8], x, 0), hB: [6, -62], head: [10, -110], chest: [5, -88], hip: [1, -59] });
-      const STRETCH = P({ hF: [18, -126], hB: [-14, -126], head: [1, -119], chest: [0, -91], ef: -1, eb: 1 });
+      const STRETCH = P({ hF: [18, -126], hB: [-14, -126], head: [1, -119], chest: [0, -91] });
       let pose, travel = S.t * 6, rot = S.t * 0.5, busy = 0, prK = -1, payoff = -1, stack = 3;
       const tix = [];
       if (T < 0) {
@@ -1006,7 +1006,7 @@
         puts.forEach((t0) => {
           keys.push([t0, PUT], [t0 + 0.15, PUT], [t0 + 0.45, IDLE]);
         });
-        keys.push([2.4, IDLE], [2.8, STRETCH, E.out], [3.4, STRETCH], [3.9, IDLE]);
+        keys.push([2.4, IDLE], [2.85, STRETCH], [3.4, STRETCH], [3.9, IDLE]);
         pose = breathe(seq(T, keys), S.t, 0.5);
         puts.forEach((t0, i) => {
           const tt = T - (t0 + 0.12);
@@ -1146,8 +1146,8 @@
       const T = S.on ? S.u * this.dur : -1;
       const { wx, wy, ww, wh, bar, slots, stops } = SL;
       const LOOK = P({ hF: [10, -58], hB: [-2, -58], head: [8, -118], chest: [2, -90] });
-      const reachOf = (i, xx) => lp([slots[i][0] - slots[i][1] / 2 + 6, bar + 6], xx, 0);
-      let x = stops[0], sx = 1, pose, meter = 0.38 + Math.sin(S.t * 0.4) * 0.05, placed = [1, 1, 1], inHand = -1, carry = 0, payoff = -1, stack = 0;
+      const grip = (i) => [stops[i] + 26, bar + 6];
+      let x = stops[0], sx = 1, pose, meter = 0.38 + Math.sin(S.t * 0.4) * 0.05, placed = [1, 1, 1], inHand = -1, carry = 0, payoff = -1, stack = 0, lift = 0;
       if (T < 0) {
         const tap = Math.max(0, Math.sin(S.t * 6)) * pulse(S.t, 5, 1, 1.6);
         pose = breathe(P({ fF: [6, -2.5 - tap * 3] }, LOOK), S.t);
@@ -1156,29 +1156,32 @@
         const snaps = [0.75, 1.95, 3.3];
         placed = snaps.map((t) => (T >= t ? 1 : fadeOut));
         stack = 3 - snaps.filter((t) => T >= t - 0.35).length;
-        const UP = (i, xx) => P({ hF: reachOf(i, xx), hB: [-2, -58], head: [9, -119], chest: [3, -91] });
+        const UP = (i, dy) => P({ hF: lp([grip(i)[0], grip(i)[1] + (dy || 0)], stops[i], 0), hB: [-2, -58], head: [9, -119], chest: [3, -91] });
         const legsAt = [[0.8, 1.5, stops[0], stops[1]], [2.0, 2.85, stops[1], stops[2]]];
+        pose = seq(T, [
+          [0, LOOK], [0.4, UP(0)], [0.75, UP(0)], [1.05, LOOK],
+          [1.5, LOOK], [1.85, UP(1)], [1.95, UP(1)], [2.25, LOOK],
+          [2.85, LOOK], [3.2, UP(2)], [3.3, UP(2)], [3.45, UP(2, 14)], [3.6, UP(2)], [3.72, UP(2, 14)], [3.85, UP(2)], [4.2, LOOK],
+        ]);
         if (T < 0.8) {
-          x = stops[0];
-          pose = seq(T, [[0, LOOK], [0.4, UP(0, x)], [0.75, UP(0, x)], [0.8, LOOK]]);
           inHand = T >= 0.3 && T < 0.75 ? 0 : -1;
+          lift = E.soft(seg(T, 0.3, 0.75));
         } else if (T < 1.5) {
           const w = walkSeg(T, legsAt[0][0], legsAt[0][1], legsAt[0][2], legsAt[0][3]);
           x = w.x;
-          pose = legs(LOOK, w.ph, w.amp);
+          pose = legs(pose, w.ph, w.amp);
         } else if (T < 2.0) {
           x = stops[1];
-          pose = seq(T, [[1.5, LOOK], [1.85, UP(1, x)], [1.95, UP(1, x)], [2.0, LOOK]]);
           inHand = T < 1.95 ? 1 : -1;
+          lift = E.soft(seg(T, 1.5, 1.95));
         } else if (T < 2.85) {
           const w = walkSeg(T, legsAt[1][0], legsAt[1][1], legsAt[1][2], legsAt[1][3]);
           x = w.x;
-          pose = legs(LOOK, w.ph, w.amp);
+          pose = legs(pose, w.ph, w.amp);
         } else if (T < 4.5) {
           x = stops[2];
-          const TAP = P({ hF: lp([slots[2][0] - 20, bar + 5], x, 0), hB: [-2, -58], head: [9, -119], chest: [3, -91] });
-          pose = seq(T, [[2.85, LOOK], [3.2, UP(2, x)], [3.3, UP(2, x)], [3.5, LOOK], [3.7, TAP], [3.85, LOOK], [4.0, TAP], [4.15, LOOK]]);
           inHand = T < 3.3 ? 2 : -1;
+          lift = E.soft(seg(T, 2.85, 3.3));
         } else {
           sx = sxv(Math.cos(Math.PI * E.soft(seg(T, 4.5, 4.7))));
           const w = walkSeg(T, 4.7, 6.1, stops[2], stops[0]);
@@ -1241,7 +1244,9 @@
           }
           inWorld(gg, J, () => {
             const h = J.W(J.handF);
-            slChip(gg, inHand, h[0] + SL.slots[inHand][1] / 2 - 6, h[1] - 5, 1, 0);
+            const [cx] = SL.slots[inHand];
+            const at = L2([h[0] + cx - grip(inHand)[0], h[1] - 5], [cx, bar], lift);
+            slChip(gg, inHand, at[0], at[1], 1, 0);
           });
         },
       });
@@ -1305,8 +1310,8 @@
         const pk = E.io(seg(T, 1.3, 2.2));
         const r0 = [card[0], card[1], card[2], card[3]], r1 = [clipC[0] - 14, clipC[1] - 12, 28, 17];
         const cr = lr(r0, r1, pk);
-        const lift = Math.sin(Math.PI * pk) * 14;
-        const grip = [cr[0] + 4, cr[1] + cr[3] * 0.55 - lift];
+        const lift = -Math.sin(Math.PI * pk) * 6;
+        const grip = [cr[0] + lerp(4, cr[2] - 4, pk), cr[1] + cr[3] * 0.55 - lift];
         const CARRY = P({ hF: lp(grip, x, 0), hB: IDLE.hB, head: [6, -113], chest: [2, -90] });
         if (T < 1.3) {
           pose = seq(T, [[0, IDLE], [0.6, IDLE], [0.95, GRAB], [1.3, GRAB]]);
@@ -1515,8 +1520,8 @@
       const x = -94, axle = [-62, -60], arm = 10;
       let k = 0, turn = S.t * 0.4, payoff = -1;
       if (T >= 0) {
-        k = E.io(seg(T, 0.3, 2.4)) * (1 - E.io(seg(T, 4.0, 4.7)));
-        turn = S.t * 0.4 + E.io(seg(T, 0.3, 2.4)) * TAU * 2 - E.io(seg(T, 4.0, 4.7)) * TAU * 2;
+        k = E.io(seg(T, 0.3, 2.4)) * (1 - E.io(seg(T, 3.7, 4.75)));
+        turn = S.t * 0.4 + E.io(seg(T, 0.3, 2.4)) * TAU * 2 - E.io(seg(T, 3.7, 4.75)) * TAU * 2;
         payoff = seg(T, 2.45, 3.2);
       }
       const sxk = lerp(1, m.sxF, k), syk = lerp(1, m.sy, k);

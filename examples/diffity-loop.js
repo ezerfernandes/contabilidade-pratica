@@ -318,7 +318,7 @@
           E.soft(seg(T, 5.25, 5.4)) * (1 - E.soft(seg(T, 6.8, 6.95))),
         );
         pose = breathe(typePose(t, myTyping > 0.3), t);
-        const whoa = E.soft(seg(T, 2.3, 2.6)) * (1 - E.soft(seg(T, 3.3, 3.55)));
+        const whoa = E.soft(seg(T, 2.42, 2.7)) * (1 - E.soft(seg(T, 3.3, 3.55)));
         const look = E.soft(seg(T, 1.6, 1.9)) * (1 - E.soft(seg(T, 2.3, 2.45)));
         const flick = E.soft(seg(T, 6.95, 7.1)) * (1 - E.soft(seg(T, 7.25, 7.5)));
         const wait = E.soft(seg(T, 7.5, 7.8)) * (1 - E.soft(seg(T, 9.15, 9.3)));

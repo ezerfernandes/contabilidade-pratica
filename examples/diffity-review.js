@@ -135,11 +135,11 @@
         ];
         const ws = T < 1.8 ? segs[0] : T < 4.6 ? segs[1] : T < 6.2 ? segs[2] : segs[3];
         x = ws.x;
-        gait = ws;
+        gait = (T >= 1.8 && T < 4.6) || T >= 6.2 ? { ph: -ws.ph, amp: ws.amp } : ws;
         const reachNote = E.soft(seg(T, 0.5, 0.85)) * (1 - E.soft(seg(T, 1.05, 1.3)));
         const flick = E.soft(seg(T, 1.25, 1.45)) * (1 - E.soft(seg(T, 1.6, 1.9)));
         const wait = E.soft(seg(T, 2.3, 2.6)) * (1 - E.soft(seg(T, 4.4, 4.6)));
-        const lift = E.soft(seg(T, 5.05, 5.3)) * (1 - E.soft(seg(T, 5.35, 5.42)));
+        const lift = E.soft(seg(T, 5.05, 5.3)) * (1 - E.soft(seg(T, 5.85, 6.0)));
         const slam = E.in(seg(T, 5.32, 5.42)) * (1 - E.soft(seg(T, 5.6, 5.85)));
         const cheer = E.back(seg(T, 5.6, 5.85)) * (1 - E.soft(seg(T, 6.0, 6.25)));
         pose = mix(pose, P({ hF: lp([NOTE[0] + 4, NOTE[1] + 2], x, 0, 1), hB: [-4, -54], head: [9, -114], chest: [3, -90] }), reachNote);

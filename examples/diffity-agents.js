@@ -19,9 +19,9 @@
   const EFFORT = [4, 3, 2];
   const RAIL = { x0: -150, x1: 232, y: -176 };
   const PARK = -128;
-  const ME = -222;
-  const BOX = { x: -192, y: -112, w: 46, h: 44 };
-  const SLIDER = (k) => [BOX.x + 8 + k * (BOX.w - 16), BOX.y + 9];
+  const ME = -212;
+  const BOX = { x: -192, y: -104, w: 46, h: 44 };
+  const SLIDER = (k) => [BOX.x + 8 + k * 14, BOX.y + 9];
   const KNOB = [BOX.x + 12, BOX.y + 26];
 
   function rail(g) {
@@ -104,7 +104,7 @@
     ln(g, BOX.x + BOX.w / 2 - 10, 0, BOX.x + BOX.w / 2 + 10, 0, 2.2);
     rr(g, BOX.x, BOX.y, BOX.w, BOX.h, 5);
     inkFill(g, C.paper, 1.6);
-    ln(g, BOX.x + 8, BOX.y + 9, BOX.x + BOX.w - 8, BOX.y + 9, 2, '#d4d4d4');
+    ln(g, BOX.x + 6, BOX.y + 9, BOX.x + 24, BOX.y + 9, 2, '#d4d4d4');
     const [sx, sy] = SLIDER(slideK);
     rr(g, sx - 3, sy - 4.5, 6, 9, 2);
     inkFill(g, C.butterHi, 1.2);
@@ -116,7 +116,7 @@
       rr(g, BOX.x + 24 + i * 5, BOX.y + 32 - h, 3.4, h, 1);
       inkFill(g, i < level ? '#1a7f37' : C.paper, 0.9);
     }
-    text(g, 'model', BOX.x + BOX.w / 2, BOX.y + 19, 6.5, C.muted);
+    text(g, 'model', BOX.x + 15, BOX.y + 19, 6.5, C.muted);
     text(g, 'effort', BOX.x + BOX.w / 2, BOX.y + 41, 6.5, C.muted);
   }
 
@@ -154,7 +154,7 @@
         const slideBack = E.soft(seg(T, 6.2, 6.4)) * (1 - E.soft(seg(T, 7.2, 7.5)));
         const sl = SLIDER(slideK);
         const wob = Math.sin(t * 9) * 1.2;
-        pose = mix(pose, P({ hF: lp([sl[0], sl[1] + 1], ME, 0, 1), hB: [-4, -54], head: [9, -115], chest: [3, -90] }), Math.max(slide, slideBack));
+        pose = mix(pose, P({ hF: lp([sl[0], sl[1] + 1], ME, 0, 1), hB: [-4, -54], head: [14, -113], chest: [9, -88] }), Math.max(slide, slideBack));
         pose = mix(pose, P({ hF: lp([KNOB[0] + wob, KNOB[1] - 1], ME, 0, 1), hB: [-4, -54], head: [9, -114], chest: [3, -90] }), turn);
         pose = mix(pose, P({ hF: [16, -104], hB: [-4, -54], head: [8, -118] }), nod);
       }
