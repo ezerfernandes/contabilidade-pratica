@@ -14,7 +14,7 @@ Everything here is proven on ~90 scenes on kamranahmed.info/story. Start from th
 - `runtime/stick.js`: the whole runtime. The rig (figure, poses, easing, pen), a kit of props, the stage and the `<stick-scene>` element. Copy it into the project's static folder unchanged.
 - `templates/scene.js`: the starting point for a new scene.
 - `templates/preview.html` + `scripts/frames.mjs`: render a scene frozen at chosen moments into one contact sheet, and report errors.
-- `scripts/motion.mjs`: steps a scene at 60 fps and reports motion glitches a still frame can't show: joints that snap, an arm through the face, a squashed turn, sliding feet, a hand that falls short, and a pop where the action starts or ends.
+- `scripts/motion.mjs`: steps a scene at 60 fps and reports glitches a still frame can hide: joints that snap, an arm through the face, an elbow bent the wrong way or jutting out behind, a squashed turn, sliding feet, a hand that falls short, and a pop where the action starts or ends.
 - `references/craft.md`: API cheat sheet, pose cookbook, timing recipe, prop recipes, metaphor catalog and the mistakes already made once. Read it before writing a scene.
 - `examples/`: real scenes. `diffity-review.js` (comment → agent fixes → approve, two figures, a board and a desk) is the cleanest full example. `scenes-p3.js` and `scenes-p4.js` hold ~30 more; the metaphor catalog in craft.md says which is which.
 
@@ -30,12 +30,12 @@ Everything here is proven on ~90 scenes on kamranahmed.info/story. Start from th
      --scene <id> --src path/to/scene.js \
      --frames "idle:0,idle:2.5,s:0.8,s:1.6,s:2.4,s:3.2,s:4.0,s:5.0" --fw 400 --out /tmp/<id>.png
    ```
-   `<skill-dir>` is the folder this SKILL.md is in. Then Read the PNG. `idle:<sec>` freezes the resting loop, `s:<sec>` a moment in the action, `u:<0..1>` a fraction of it. Add `@<n>` to render the nth play (`s:2.4@1`), so scenes that vary with `S.n` get every variant checked. Fix and re-render until: nothing is cropped at the edges, no prop covers a face or the thing being explained, every beat reads on its own, and the last frame matches the idle (no pop when it loops back). Two or three rounds is normal.
+   `<skill-dir>` is the folder this SKILL.md is in. Then Read the PNG. `idle:<sec>` freezes the resting loop, `s:<sec>` a moment in the action, `u:<0..1>` a fraction of it. Add `@<n>` to render the nth play (`s:2.4@1`), so scenes that vary with `S.n` get every variant checked. Fix and re-render until: nothing is cropped at the edges, no prop covers a face or the thing being explained, every beat reads on its own, text sits inside its box with room above and below, hands are in front of what they hold, held things meet the body where a real one would (a mic at the mouth, a handle in the palm), arrows are hand-drawn chevrons, not filled triangles, and the last frame matches the idle (no pop when it loops back). Two or three rounds is normal.
    Then check the motion, which the sheet can't show:
    ```sh
    NODE_PATH=<scratch>/node_modules node <skill-dir>/scripts/motion.mjs --scene <id> --src path/to/scene.js
    ```
-   Fix every `jump` (blend the pose instead of switching it), `arm-through-face`, `squash`, `start-pop` and `end-pop` until it prints "motion is clean". A short `skate` at the very start or end of a walk is fine.
+   Fix every `jump` (blend the pose instead of switching it), `arm-through-face`, `bent-back-elbow`, `elbow-out-back` (a broken-wing arm held for more than a moment), `squash`, `start-pop` and `end-pop` until it prints "motion is clean". A short `skate` at the very start or end of a walk is fine.
 5. **Embed it.** Copy `runtime/stick.js` and the scene file into the site's static folder and add:
    ```html
    <stick-scene scene="<id>" play="view" style="height:230px; max-width:560px"></stick-scene>
