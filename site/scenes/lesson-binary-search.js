@@ -24,7 +24,7 @@
   const CHEER = P({ hF: [14, -132], hB: [-10, -130], head: [3, -118] });
 
   function grabPose(i, x) {
-    return P({ hF: lp([CX(i) - CW / 2 - 1, TOP - CH / 2], x, 0, 1), hB: [-4, -54], head: [9, -114], chest: [3, -90] });
+    return P({ hF: lp([CX(i) - CW / 2 - 1, TOP - CH / 2], x, 0, 1), hB: [-4, -54], head: [9, -114], chest: [3, -90], ef: 0.35 });
   }
 
   function card(g, cx, by, n, o) {
@@ -154,7 +154,7 @@
         greenK = seg(T, 6.5, 6.75) * (1 - back);
         tickK = seg(T, 6.7, 7.0) * (1 - back);
 
-        const cheer = E.back(seg(T, 7.5, 7.8)) * (1 - E.soft(seg(T, 7.95, 8.2)));
+        const cheer = E.back(seg(T, 7.4, 7.95)) * (1 - E.soft(seg(T, 7.95, 8.2)));
         pose = mix(pose, CHEER, cheer);
 
         cntA = Math.abs(1 - 2 * back);
@@ -162,7 +162,7 @@
           looks = 0;
         }
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
       setStep(g, step);
 
       sign(g);

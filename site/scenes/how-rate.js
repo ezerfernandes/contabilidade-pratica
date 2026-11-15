@@ -175,31 +175,31 @@
   };
 
   // ------------------------------------------------------------ bucket: a token per request; when it runs dry, wait for the next drip
-  const BF = -96;
-  const BELT = { x0: -86, x1: 238, y: -56 };
-  const SLOT = [-66, -26, 14];
-  const TUB = { cx: -126, top: -72, bot: -48, w: 36 };
-  const POST = -152;
-  const SPOUT = [TUB.cx, -146];
+  const BF = -102;
+  const BELT = { x0: -88, x1: 238, y: -56 };
+  const SLOT = [-64, -20, 24];
+  const TUB = { cx: -64, top: -112, bot: -90, w: 28 };
+  const POST = -36;
+  const SPOUT = [TUB.cx, -150];
   const discY = (i) => TUB.bot - 5 - i * 6;
   const LAND = [4.05, 5.45, 6.85];
-  const STAMP = [SLOT[0] - 8, -70];
+  const STAMP = [SLOT[0] - 6, -71];
   const PLAN = [
-    { start: 270, slot: 0, grab: 0.8, stuck: 1.35, fly: 1.5 },
-    { start: 320, slot: 1, grab: 1.75, stuck: 2.3, fly: 2.45 },
-    { start: 370, slot: 2, grab: 4.1, stuck: 4.65, fly: 4.8 },
+    { start: 270, slot: 0, grab: 0.8, stuck: 1.3, fly: 1.5 },
+    { start: 320, slot: 1, grab: 1.75, stuck: 2.25, fly: 2.45 },
+    { start: 370, slot: 2, grab: 4.1, stuck: 4.6, fly: 4.8 },
   ];
 
   function rig(g, spin) {
-    ln(g, POST, 0, POST, -162, 2.6, C.ink);
-    ln(g, POST, -156, SPOUT[0] + 4, -156, 4.5, C.ink);
-    ln(g, POST, -156, SPOUT[0] + 4, -156, 2.4, C.steel);
-    rr(g, SPOUT[0] - 5, -160, 10, 13, 2);
+    ln(g, POST, 0, POST, -166, 2.6, C.ink);
+    ln(g, POST, -160, SPOUT[0] - 4, -160, 4.5, C.ink);
+    ln(g, POST, -160, SPOUT[0] - 4, -160, 2.4, C.steel);
+    rr(g, SPOUT[0] - 5, -164, 10, 13, 2);
     inkFill(g, C.steel, 1.4);
-    rr(g, SPOUT[0] - 3, -168, 6, 8, 2);
+    rr(g, SPOUT[0] - 3, -172, 6, 8, 2);
     inkFill(g, C.steel, 1.2);
-    ln(g, TUB.cx - 10, TUB.bot, TUB.cx - 14, 0, 2.2);
-    ln(g, TUB.cx + 10, TUB.bot, TUB.cx + 14, 0, 2.2);
+    ln(g, TUB.cx - 12, TUB.bot, POST, TUB.bot, 3, C.ink);
+    ln(g, POST, TUB.bot + 14, POST - 12, TUB.bot, 1.8, C.ink);
     ln(g, BELT.x0 + 14, BELT.y + 8, BELT.x0 + 10, 0, 2.2);
     ln(g, BELT.x1 - 40, BELT.y + 8, BELT.x1 - 36, 0, 2.2);
     rr(g, BELT.x0, BELT.y, BELT.x1 - BELT.x0, 9, 4.5);
@@ -239,7 +239,7 @@
       const T = S.on ? S.u * this.dur : -1;
       const t = S.t;
       let pose = breathe(P(REST), t);
-      let bead = 0.25, drop = -1, discs = [1, 1], envs = [], inB = 0, inF = 0, waitK = 0, spin = 0, plink = 0, dig = 0;
+      let bead = 0.25, drop = -1, discs = [1, 1], envs = [], inF = 0, waitK = 0, spin = 0, plink = 0, dig = 0;
       if (T < 0) {
         pose = mix(pose, P({ ...REST, head: [5, -119] }), pulse(t, 6.4, 2.6, 1.8));
       } else {
@@ -279,33 +279,26 @@
             pos = arcPt([SLOT[0], BELT.y], [262, -205], 40, E.in(fk));
           }
           envs.push({ pos, rot: -fk * 0.6, token: seg(T, pl.stuck - 0.05, pl.stuck + 0.05), tick: seg(T, pl.stuck + 0.02, pl.stuck + 0.3) * (1 - seg(T, pl.fly + 0.1, pl.fly + 0.3)), a: fk >= 1 ? 0 : 1 });
-          if (i !== 2 || T > 4) {
-            if (T >= pl.grab + 0.2 && T < pl.grab + 0.36) {
-              inB = 1;
-            }
-            if (T >= pl.grab + 0.36 && T < pl.stuck) {
-              inF = 1;
-            }
+          if (T >= pl.grab + 0.22 && T < pl.stuck) {
+            inF = 1;
           }
         }
         waitK = seg(T, 3.3, 3.45) * (1 - seg(T, 3.95, 4.1));
         dig = Math.sin(T * 30) * 3 * bump(T, 2.95, 3.0, 3.1, 3.18);
 
-        const grab = (i) => P({ hB: lp([TUB.cx + 4, discY(i) - 1], BF, 0, 1), hF: [14, -66], head: [-3, -114], chest: [-2, -90] });
-        const pass = P({ hF: [17, -80], hB: [13, -79], head: [6, -115] });
+        const grab = (i) => P({ hF: lp([TUB.cx - 7, discY(i) - 1], BF, 0, 1), hB: [-4, -54], head: [8, -117], chest: [3, -90] });
         const slap = P({ hF: lp(STAMP, BF, 0, 1), hB: [-4, -54], head: [9, -113], chest: [4, -89] });
         const step = (a, i) => {
-          pose = mix(pose, grab(i), bump(T, a, a + 0.2, a + 0.22, a + 0.4));
-          pose = mix(pose, pass, bump(T, a + 0.2, a + 0.36, a + 0.38, a + 0.48));
-          pose = mix(pose, slap, bump(T, a + 0.38, a + 0.55, a + 0.62, a + 0.85));
+          pose = mix(pose, grab(i), bump(T, a, a + 0.22, a + 0.27, a + 0.45));
+          pose = mix(pose, slap, bump(T, a + 0.27, a + 0.5, a + 0.6, a + 0.85));
         };
         step(PLAN[0].grab, 1);
         step(PLAN[1].grab, 0);
         const g3 = grab(0);
-        g3.hB = [g3.hB[0] + dig, g3.hB[1]];
+        g3.hF = [g3.hF[0] + dig, g3.hF[1]];
         pose = mix(pose, g3, bump(T, 2.75, 2.95, 3.12, 3.3));
-        pose = mix(pose, P({ hF: [24, -72], hB: [-14, -74], head: [2, -118], chest: [0, -91] }), bump(T, 3.2, 3.4, 3.7, 3.9));
-        pose = mix(pose, P({ ...REST, head: [1, -120] }), bump(T, 3.7, 3.85, 3.98, 4.12));
+        pose = mix(pose, P({ hF: [22, -66], hB: [12, -66], head: [3, -118], chest: [0, -92] }), bump(T, 3.2, 3.4, 3.7, 3.9));
+        pose = mix(pose, P({ ...REST, head: [6, -121] }), bump(T, 3.7, 3.85, 3.98, 4.12));
         step(PLAN[2].grab, 0);
         pose = mix(pose, P({ ...REST, head: [5, -118] }), bump(T, 5.0, 5.3, 5.8, 6.2));
       }
@@ -326,9 +319,6 @@
       }
       sparks(g, TUB.cx, TUB.top - 2, plink, 14, 5, C.muted);
       const J = fig(g, pose, BF, 0, { wave: S.wave, wt: S.wt });
-      if (inB) {
-        disc(g, J.w.handB[0], J.w.handB[1] + 1, 0.8);
-      }
       if (inF) {
         disc(g, J.w.handF[0] + 2, J.w.handF[1] + 2, 0.8);
       }
@@ -338,7 +328,7 @@
           tickBadge(g, v.pos[0], v.pos[1] - 32, v.tick, 8, GREEN, GREEN_INK);
         }
       }
-      bubble(g, BF + 34, -122, 'wait', waitK, { tail: -26, size: 10 });
+      bubble(g, BF - 34, -122, 'wait', waitK, { tail: 28, size: 10 });
     },
   };
 

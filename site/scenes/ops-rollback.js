@@ -133,7 +133,7 @@
 
         const ws = T < 4.6 ? walkSeg(T, 3.1, 3.55, HOME, AT) : walkSeg(T, 4.8, 5.3, AT, HOME);
         x = ws.x;
-        gait = T < 4.6 ? ws : { ph: -ws.ph, amp: ws.amp };
+        gait = T < 4.6 ? ws : { ph: -ws.ph, amp: ws.amp, stride: ws.stride };
         const look = E.soft(seg(T, 0.3, 0.8)) * (1 - E.soft(seg(T, 2.2, 2.5)));
         const think = E.soft(seg(T, 2.3, 2.6)) * (1 - E.soft(seg(T, 2.9, 3.15)));
         const grab = E.soft(seg(T, 3.5, 3.75)) * (1 - E.soft(seg(T, 4.35, 4.6)));
@@ -144,7 +144,7 @@
         const rub = Math.sin(T * 26) * 4;
         pose = mix(pose, P({ hF: [16 + rub, -66], hB: [14 - rub, -62], head: [7, -115] }), dust);
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       board(g, ver, squish, bad, err, okK);
       conveyor(g, spin);

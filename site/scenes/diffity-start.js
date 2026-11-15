@@ -17,6 +17,19 @@
   const ROW = (i) => B.y + 31 + i * 12;
   const NOTE = [B.x + 10, ROW(2) + 1];
   const HOME = -232, AT_SHELF = -122, AT_BOARD = 50;
+  // Speeds up, cruises, slows down: a lower top speed than E.soft, so the long walk home stays a walk.
+  const RAMP = 0.2;
+  function cruise(k) {
+    const up = (q) => q / 2 - (RAMP / (2 * Math.PI)) * Math.sin((Math.PI * q) / RAMP);
+    const total = 1 - RAMP;
+    if (k <= RAMP) {
+      return up(k) / total;
+    }
+    if (k >= 1 - RAMP) {
+      return 1 - up(1 - k) / total;
+    }
+    return (RAMP / 2 + (k - RAMP)) / total;
+  }
 
   function stool(g) {
     ln(g, BOX.x - 14, BOX.top + 4, BOX.x - 18, 0, 2.2);
@@ -213,7 +226,7 @@
 
         const w1 = walkSeg(T, 2.0, 2.7, HOME, AT_SHELF);
         const w2 = walkSeg(T, 3.3, 4.3, AT_SHELF, AT_BOARD);
-        const w3 = walkSeg(T, 7.0, 8.4, AT_BOARD, HOME);
+        const w3 = walkSeg(T, 7.0, 8.4, AT_BOARD, HOME, null, cruise);
         const ws = T < 3.0 ? w1 : T < 6.0 ? w2 : w3;
         x = ws.x;
         gait = ws;
@@ -250,7 +263,7 @@
           pickedA = seg(T, 7.1, 7.5);
         }
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
       setStep(g, step);
 
       stool(g);

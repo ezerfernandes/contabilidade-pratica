@@ -54,7 +54,7 @@
     const GROW = Math.log(R1 / R0);
     const COINS = Array.from({ length: 16 }, (_, i) => [0.25 + hash(i + 1) * 0.6, hash(i + 40) * Math.PI * 2, R0 + 3 + i * 3.4]);
 
-    const KICK = P({ fF: [26, -16], kF: [24, -40], hip: [-3, -58], chest: [-5, -89], head: [-6, -115], hF: [16, -72], hB: [-16, -70] });
+    const KICK = P({ fF: [26, -16], kF: [24, -40], hip: [-3, -58], chest: [-5, -89], head: [-6, -115], hF: [16, -72], hB: [8, -58] });
     const CHASE = P({ chest: [6, -88], head: [13, -112], hF: [30, -92], hB: [24, -88] });
     const PUSH = (x, y, c) => P({ hF: lp([c[0] - R1 + 3, c[1] + 6], x, y, 1), hB: lp([c[0] - R1 + 4, c[1] + 14], x, y, 1), chest: [6, -88], head: [10, -113] });
     const SQUAT = P({ hip: [-2, -38], chest: [8, -64], head: [16, -86], kF: [26, -26], kB: [16, -24], hF: [24, -34], hB: [18, -32] });
@@ -153,7 +153,7 @@
           pose = mix(pose, P({ hF: lp([B0 - 9, hY(B0) - R0 * 2 - 2 + pat * 3], HOME, PLAT, 1), hB: lp([B0 - 12, hY(B0) - R0 * 1.4], HOME, PLAT, 1), hip: [-2, -38], chest: [8, -64], head: [16, -86], kF: [26, -26], kB: [16, -24] }), squat * E.soft(seg(T, 5.9, 6.05)));
           newR = R0 * E.out(seg(T, 6.01, 6.45));
         }
-        pose = legs(pose, gait.ph, gait.amp, { arms: false });
+        pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
         const y = hY(x);
 
         hill(g);
@@ -205,8 +205,8 @@
     const th = (x) => TH + (hash(x * 0.37) - 0.5) * 14;
     const coinOn = (tr) => [tr.x + 8, -th(tr.x) - CR + 10];
 
-    const PLANT = P({ hip: [-2, -44], chest: [8, -72], head: [15, -95], kF: [26, -28], kB: [16, -26], hF: [24, -26], hB: [2, -60] });
-    const WATER = P({ hF: [10, -62], hB: [26, -78], head: [8, -114], chest: [3, -90] });
+    const PLANT = P({ hip: [-2, -44], chest: [8, -72], head: [15, -95], kF: [26, -28], kB: [16, -26], hF: [24, -26], hB: [6, -34] });
+    const WATER = P({ hF: [16, -58], hB: [26, -78], head: [8, -114], chest: [3, -90] });
     const LOOK = P({ hF: [18, -88], hB: [-4, -54], head: [5, -116] });
 
     function tree(g, x, k, coinK, glint) {
@@ -297,7 +297,7 @@
           }
           show = x - cam > -290;
         }
-        pose = legs(pose, gait.ph, gait.amp, { arms: false });
+        pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
         g.save();
         g.translate(-cam, 0);
@@ -449,7 +449,7 @@
           }
           show = x - cam > -290;
         }
-        pose = legs(pose, gait.ph, gait.amp, { arms: false });
+        pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
         g.save();
         g.translate(-cam, 0);

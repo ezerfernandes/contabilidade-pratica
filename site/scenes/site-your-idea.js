@@ -121,7 +121,7 @@
         alpha = fade;
         done = seg(T, 2.4, 3) * (1 - seg(T, 3.6, 4));
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
       board(g, idea, sketch, alpha);
       fig(g, pose, x, 0, { wave: S.wave, wt: S.wt });
       sparks(g, DX, DY + 14, done, 24, 7);

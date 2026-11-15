@@ -206,7 +206,8 @@
         const off = [Math.cos(ang) * WHEEL, Math.sin(ang) * WHEEL];
         const handAim = [wheelAim[0] - off[0], wheelAim[1] - off[1]];
         const cutW = aimIn * (1 - aimOut);
-        const lean = P({ hF: lp(handAim, FIGX, 0, 1), hB: [-4, -60], head: [10, -112], chest: [4, -88] });
+        const aimL = lp(handAim, FIGX, 0, 1);
+        const lean = P({ hF: aimL, hB: [-4, -60], head: [10, -112], chest: [4, -88], ef: lerp(0.15, 1, E.sm(clamp((aimL[0] - 4) / 18, 0, 1))) });
         pose = mix(pose, lean, cutW);
         cutterAng = lerp(cutterAng, ang, cutW);
         cut1 = c1;

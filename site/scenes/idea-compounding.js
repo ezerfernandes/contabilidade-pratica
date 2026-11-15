@@ -150,9 +150,9 @@
         pose = mix(pose, WATCH, E.soft(seg(T, 3.2, 3.5)) * (1 - E.soft(seg(T, 5.4, 5.7))));
 
         payK = seg(T, 5.75, 6.15);
-        const cheer = E.back(seg(T, 6.05, 6.3)) * (1 - E.soft(seg(T, 7.0, 7.3)));
+        const cheer = E.back(seg(T, 6.0, 6.55)) * (1 - E.soft(seg(T, 7.0, 7.3)));
         pose = mix(pose, CHEER, cheer);
-        pose.hF = [pose.hF[0], pose.hF[1] + Math.sin((T - 6.05) * 12) * 3 * cheer];
+        pose = { ...pose, hF: [pose.hF[0], pose.hF[1] + Math.sin((T - 6.05) * 12) * 3 * cheer] };
         ballA = fade;
       }
       setStep(g, step);

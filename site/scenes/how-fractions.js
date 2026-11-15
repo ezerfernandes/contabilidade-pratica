@@ -86,22 +86,22 @@
     text(g, '!', 0, 0, 17, C.ink);
     g.restore();
   }
-  const SHRUG = P({ hF: [20, -82], hB: [-14, -82], head: [2, -113], chest: [0, -91] });
+  const SHRUG = P({ hF: [22, -82], hB: [6, -80], head: [2, -113], chest: [0, -91] });
 
   // ---------------------------------------------------------------- pizza
   const PZ = { x: -30, y: -78, r: 40 };
   const PFX = PZ.x - 66;
   const PSIGN = 112;
   const CRUST = '#e9bd7a', CHEESE = '#fcd34d', PEP = '#d9604a', PEP_INK = '#a8432f';
-  const CUT_L = 64, WR = 7;
+  const CUT_L = 52, WR = 7;
   const D45 = Math.SQRT1_2 * PZ.r;
   const A_S = [PZ.x - D45, PZ.y - D45], A_E = [PZ.x + D45, PZ.y + D45];
   const B_S = [PZ.x - D45, PZ.y + D45], B_E = [PZ.x + D45, PZ.y - D45];
   const WA0 = Math.PI * 0.75, WA1 = Math.PI * 1.25;
   const PEPS = [0, 1, 2, 3].flatMap((q) => [[q * Math.PI / 2, 0.6], [q * Math.PI / 2 + 0.42, 0.28]]);
   const LEAN = P({ hF: [12, -62], chest: [5, -88], head: [9, -112] });
-  const FLOUR_H = [PFX - 14, -104];
-  const FLOUR_TH = -Math.PI / 2 + 0.35;
+  const FLOUR_DX = 12, FLOUR_Y = -112;
+  const FLOUR_TH = -Math.PI / 2 + 0.45;
   const POINT = P({ hF: [40, -100], hB: [-4, -54], head: [9, -119], chest: [2, -91] });
 
   function pizzaFace(g, r) {
@@ -142,8 +142,8 @@
     g.restore();
   }
   function easel(g) {
-    ln(g, PZ.x - 14, PZ.y + 20, PZ.x - 30, 0, 2.4);
-    ln(g, PZ.x + 14, PZ.y + 20, PZ.x + 30, 0, 2.4);
+    ln(g, PZ.x - 12, PZ.y + 20, PZ.x - 20, 0, 2.4);
+    ln(g, PZ.x + 12, PZ.y + 20, PZ.x + 20, 0, 2.4);
     ln(g, PZ.x, PZ.y + 10, PZ.x + 4, 0, 2, C.far);
     circle(g, PZ.x, PZ.y, PZ.r + 6);
     inkFill(g, C.wood, 1.6);
@@ -205,10 +205,11 @@
     g.stroke();
     g.restore();
   }
-  function cutter(g, hand, w, spin) {
-    ln(g, hand[0], hand[1], w[0], w[1], 4.8, C.ink);
-    ln(g, hand[0], hand[1], w[0], w[1], 2.4, C.wood);
+  function cutter(g, hand, w, spin, butt) {
     const dx = w[0] - hand[0], dy = w[1] - hand[1], d = Math.hypot(dx, dy) || 1;
+    const b0 = [hand[0] - (dx / d) * (butt || 0), hand[1] - (dy / d) * (butt || 0)];
+    ln(g, b0[0], b0[1], w[0], w[1], 4.8, C.ink);
+    ln(g, b0[0], b0[1], w[0], w[1], 2.4, C.wood);
     ln(g, hand[0] - (dx / d) * 4, hand[1] - (dy / d) * 4, hand[0] + (dx / d) * 9, hand[1] + (dy / d) * 9, 4.4, C.umber);
     circle(g, w[0], w[1], WR);
     inkFill(g, C.steel, 1.5);
@@ -220,21 +221,47 @@
     g.fillStyle = C.ink;
     g.fill();
   }
-  function solveHand(Sh, W) {
+  // The back hand holds the end of the handle, in front of the shoulder and a little below the line to the wheel.
+  function grip(Sh, W, side) {
     const dx = W[0] - Sh[0], dy = W[1] - Sh[1];
     const d = Math.hypot(dx, dy) || 1;
-    const a = clamp(Math.max(24, d - CUT_L + 2, CUT_L - d + 2), 0, 36.5);
+    const a = clamp(Math.max(36 - (d - 40) * 0.5, 26, d - CUT_L + 1.5), 0, 36.8);
     const x = (a * a - CUT_L * CUT_L + d * d) / (2 * d);
     const h = Math.sqrt(Math.max(0, a * a - x * x));
-    const ux = dx / d, uy = dy / d;
-    const bx = Sh[0] + ux * x, by = Sh[1] + uy * x;
-    return [bx - uy * h, by + ux * h];
+    const phi = Math.atan2(dy, dx) + Math.atan2(h, x) * side;
+    return { H: [Sh[0] + Math.cos(phi) * a, Sh[1] + Math.sin(phi) * a], b: 0 };
+  }
+  // Same as the runtime's relax(): a low resting hand hangs from a nearly straight arm (local pose space).
+  function relaxL(p, t) {
+    const vx = p.chest[0] - p.hip[0], vy = p.chest[1] - p.hip[1];
+    const sl = Math.hypot(vx, vy) || 1;
+    const sh = [p.chest[0] - vx / sl, p.chest[1] - vy / sl];
+    const dx = t[0] - sh[0], dy = t[1] - sh[1];
+    const d = Math.hypot(dx, dy);
+    const want = 42 * 0.96;
+    if (dy <= 0 || d < 1 || d >= want) {
+      return t;
+    }
+    const w = E.sm(clamp((dy / d - 0.8) / 0.18, 0, 1));
+    return [sh[0] + (dx / d) * lerp(d, want, w), sh[1] + (dy / d) * lerp(d, want, w)];
+  }
+  function polar(Sh, a, b, k) {
+    const ra = Math.hypot(a[0] - Sh[0], a[1] - Sh[1]), rb = Math.hypot(b[0] - Sh[0], b[1] - Sh[1]);
+    const ta = Math.atan2(a[1] - Sh[1], a[0] - Sh[0]);
+    let tb = Math.atan2(b[1] - Sh[1], b[0] - Sh[0]);
+    while (tb - ta > Math.PI) {
+      tb -= TAU;
+    }
+    while (tb - ta < -Math.PI) {
+      tb += TAU;
+    }
+    const r = lerp(ra, rb, k), th = lerp(ta, tb, k);
+    return [Sh[0] + Math.cos(th) * r, Sh[1] + Math.sin(th) * r];
   }
   const ang = (a, b) => Math.atan2(b[1] - a[1], b[0] - a[0]);
   const fromAng = (h, th) => [h[0] + Math.cos(th) * CUT_L, h[1] + Math.sin(th) * CUT_L];
   function caneAt(h) {
-    const s = clamp((-WR - h[1]) / CUT_L, -1, 1);
-    return Math.PI - Math.asin(s);
+    return Math.asin(clamp((-WR - h[1]) / CUT_L, -1, 1));
   }
   function eyes(g, head, k, look) {
     if (k <= 0) {
@@ -275,6 +302,7 @@
       let cutA = 0, cutB = 0, lineA = 1, open = false, ghost = 0, back = 0, spin = 0;
       let tool = null, sl = null, val = { a: '1', b: '1', k: 1 }, hi = 0, glance = 0, sweatK = 0, glint = 0;
       const noms = [];
+      let x = PFX, gait = { ph: 0, amp: 0 };
       if (T < 0) {
         const rub = Math.sin(t * 9) * 2.5;
         pose = mix(pose, P({ hF: [9 + rub, -70], hB: [-4, -52], head: [3, -117] }), pulse(t, 6.5, 2.5, 1.9));
@@ -314,6 +342,9 @@
         }
         [3.95, 4.15, 4.35].forEach((b) => noms.push(seg(T, b, b + 0.5)));
 
+        const ws = T < 1.2 ? walkSeg(T, 0.05, 0.4, PFX, PFX + 10) : walkSeg(T, 2.1, 2.5, PFX + 10, PFX);
+        x = ws.x;
+        gait = T < 1.2 ? ws : { ph: -ws.ph, amp: ws.amp, stride: ws.stride };
         if (T >= 0.05 && T < 3.1) {
           let W = null;
           if (T >= 0.45 && T < 2.05) {
@@ -325,7 +356,7 @@
               W = L2(B_S, B_E, cutB);
             }
           }
-          const base = shoulderW(pose, PFX);
+          const base = shoulderW(pose, x);
           let leanK;
           if (W) {
             leanK = E.sm(clamp((Math.hypot(W[0] - base[0], W[1] - base[1]) - 62) / 24, 0, 1));
@@ -334,44 +365,50 @@
           } else {
             leanK = 1 - E.soft(seg(T, 2.05, 2.4));
           }
-          pose = mix(pose, P({ chest: LEAN.chest, head: LEAN.head }, pose), leanK);
-          const Sh = shoulderW(pose, PFX);
-          const restH = [PFX + pose.hB[0] * FS, pose.hB[1] * FS];
-          let H, th;
+          pose = mix(pose, P({ chest: LEAN.chest, head: LEAN.head, hF: [18, -66] }, pose), leanK);
+          const Sh = shoulderW(pose, x);
+          const restL = relaxL(pose, pose.hB);
+          const restH = [x + restL[0] * FS, restL[1] * FS];
+          const FLOUR_H = [x + FLOUR_DX, FLOUR_Y];
+          let H, th, b = 0;
+          const side = T < 1.1 ? 1 - 2 * E.soft(seg(cutA, 0.2, 0.8)) : T < 1.42 ? -1 : -1 + 2 * E.soft(seg(cutB, 0.2, 0.8));
           if (W) {
-            H = solveHand(Sh, W);
+            const gp = grip(Sh, W, side);
+            H = gp.H;
+            b = gp.b;
             th = ang(H, W);
           } else if (T < 0.45) {
             const k = E.soft(seg(T, 0.05, 0.45));
-            const Hc = solveHand(Sh, A_S);
-            H = L2(restH, Hc, k);
-            th = lerp(caneAt(restH), ang(Hc, A_S) + TAU, k);
+            const gA = grip(Sh, A_S, 1);
+            H = polar(Sh, restH, gA.H, k);
+            th = lerp(caneAt(restH), ang(gA.H, A_S), k);
           } else if (T < 2.75) {
             const k = E.soft(seg(T, 2.05, 2.4));
-            const Hc = solveHand(Sh, B_E);
-            H = L2(Hc, FLOUR_H, k);
+            const gB = grip(Sh, B_E, 1);
+            H = L2(gB.H, FLOUR_H, k);
             const tw = Math.sin(seg(T, 2.4, 2.75) * Math.PI * 2) * 0.22;
-            th = lerp(ang(Hc, B_E), FLOUR_TH, k) + tw;
+            th = lerp(ang(gB.H, B_E), FLOUR_TH, k) + tw;
           } else {
             const k = E.soft(seg(T, 2.75, 3.1));
-            H = L2(FLOUR_H, restH, k);
-            th = lerp(FLOUR_TH, caneAt(restH) - TAU, k);
+            H = polar(Sh, FLOUR_H, restH, k);
+            th = lerp(FLOUR_TH, caneAt(restH), k);
           }
           if (!W) {
-            W = fromAng(H, th);
+            W = [H[0] + Math.cos(th) * (CUT_L - b), H[1] + Math.sin(th) * (CUT_L - b)];
           }
-          pose = Object.assign({}, pose, { hB: lp(H, PFX, 0, 1) });
-          tool = { W, th };
+          pose = Object.assign({}, pose, { hB: lp(H, x, 0, 1) });
+          tool = { W, th, b };
         }
         val = valAt(T, '1', [[2.15, '4/4'], [4.85, '3/4'], [6.3, '1']]);
         hi = E.soft(seg(T, 5.07, 5.3)) * (1 - seg(T, 6.3, 6.52));
       }
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       sign(g, PSIGN, val, 'left', hi);
       easel(g);
       pizza(g, cutA, cutB, open, lineA, ghost);
       let wheel = null;
-      const J = fig(g, pose, PFX, 0, {
+      const J = fig(g, pose, x, 0, {
         wave: S.wave,
         wt: S.wt,
         behind: (gg, JJ) =>
@@ -379,7 +416,7 @@
             const th = tool ? tool.th : caneAt(hB);
             const W = tool ? tool.W : fromAng(hB, th);
             wheel = W;
-            cutter(gg, hB, W, spin);
+            cutter(gg, hB, W, spin, tool ? tool.b : 0);
             if (sl) {
               slice(gg, sl.tip, sl.rot, sl.b, sl.alpha, sl.edgeA);
             }
@@ -577,7 +614,7 @@
         braceK = E.soft(seg(T, 5.05, 5.35));
         tagK = seg(T, 5.2, 5.6);
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       let hand = null;
       const J = fig(g, pose, x, 0, {
@@ -625,7 +662,7 @@
   const BREST = P({ hF: [14, -66], hB: [-2, -62] });
   const RUB = (t) => P({ hF: [17 + Math.sin(t * 14) * 2.2, -77], hB: [12 - Math.sin(t * 14) * 2.2, -76], head: [5, -116] });
   const RAISE = P({ hF: [10, -136], hB: [-6, -60], head: [3, -118], chest: [-2, -90] });
-  const STARTLE = P({ hF: [16, -118], hB: [-14, -116], head: [-4, -117], chest: [-3, -90] });
+  const STARTLE = P({ hF: [18, -118], hB: [6, -118], head: [-4, -117], chest: [-3, -90] });
   const BIRD_A = [250, -150], BIRD_C1 = [130, -150], BIRD_G = [spreadC(GIVE), -60], BIRD_C2 = [110, -60], BIRD_E = [262, -178];
   const CRUMBS = Array.from({ length: 9 }, (_, i) => ({
     x: restL(1 + (i % 3)) + (R.hash(i) - 0.5) * 8,
@@ -714,7 +751,7 @@
         const rub = E.soft(seg(T, 1.3, 1.55)) * (1 - E.soft(seg(T, 2.35, 2.55)));
         pose = mix(pose, RUB(T), rub);
 
-        const startle = E.soft(seg(T, 2.48, 2.78)) * (1 - E.soft(seg(T, 3.2, 3.5)));
+        const startle = E.soft(seg(T, 2.45, 2.85)) * (1 - E.soft(seg(T, 3.2, 3.5)));
         pose = mix(pose, P(STARTLE, pose), startle);
         const watch = E.soft(seg(T, 2.85, 3.1)) * (1 - E.soft(seg(T, 3.3, 3.5)));
         pose = mix(pose, P({ head: [7, -119] }, pose), watch);

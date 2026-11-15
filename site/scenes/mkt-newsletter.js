@@ -103,7 +103,7 @@
         welcomeK = seg(T, 6.0, 6.3) * (1 - seg(T, 7.1, 7.4));
         typedK *= fade;
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       mailbox(g, flagK);
       const J = fig(g, pose, x, 0, { sx, wave: S.wave, wt: S.wt });
@@ -111,14 +111,16 @@
       if (cardHand === 1) {
         card(g, hB[0] + 10, hB[1] - 4, -0.15, typedK);
         ln(g, hF[0] - 2, hF[1] + 3, hF[0] + 5, hF[1] - 9, 2.4, C.amber);
+        R.frontArm(g, J);
+      }
+      if (cardHand === 2) {
+        card(g, hF[0] + 8, hF[1] - 2, 0, 1);
+        R.frontArm(g, J);
       }
       g.save();
       g.beginPath();
       g.rect(BOX.x - 300, -200, 300, 200);
       g.clip();
-      if (cardHand === 2) {
-        card(g, hF[0] + 8, hF[1] - 2, 0, 1);
-      }
       if (cardIn >= 0 && cardIn < 1 && T >= 2.95) {
         card(g, lerp(DOOR[0] - 4, DOOR[0] + 22, E.in(cardIn)), DOOR[1], 0, 1);
       }

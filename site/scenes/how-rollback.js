@@ -8,7 +8,7 @@
   const RED = '#ffebe9', GREEN = '#dafbe1', RED_INK = C.redInk, GREEN_INK = C.greenInk, GREY = '#a3a3a3', TAPE = '#4a4a4a';
   const REST = { hF: [12, -60], hB: [-4, -52] };
   const CHIN = P({ hF: [10, -96], head: [7, -116], hB: [-4, -54] });
-  const ALARM = P({ hF: [18, -84], hB: [6, -80], head: [1, -117], chest: [-2, -90] });
+  const ALARM = P({ hF: [18, -84], hB: [6, -80], head: [1, -117], chest: [-2, -90], hang: 0 });
 
   const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
   const mixCol = (a, b, k) => {
@@ -56,15 +56,7 @@
     circle(g, PIV[0], PIV[1], 4);
     inkFill(g, C.paper, 1.4);
     const cx = PED.x + PED.w / 2 + 3, cy = PED.y + 40;
-    g.beginPath();
-    g.arc(cx, cy, 9, Math.PI * 1.05, Math.PI * 2.3);
-    g.strokeStyle = C.ink;
-    g.lineWidth = 1.9;
-    g.stroke();
-    const a0 = [cx + Math.cos(Math.PI * 1.05) * 9, cy + Math.sin(Math.PI * 1.05) * 9];
-    poly(g, [[a0[0] - 4.5, a0[1] - 1], [a0[0] + 4.5, a0[1] - 1], [a0[0], a0[1] + 6]], true);
-    g.fillStyle = C.ink;
-    g.fill();
+    R.arcArrow(g, cx, cy, 9, Math.PI * 2.3, Math.PI * 1.05, { lw: 1.9 });
   }
   function cable(g) {
     g.beginPath();
@@ -95,13 +87,7 @@
     wline(g, pts, 2.3, s.lineCol, 0.3, 3);
     if (s.climb > 20) {
       const a = pts[pts.length - 2], b = pts[pts.length - 1];
-      g.save();
-      g.translate(b[0], b[1]);
-      g.rotate(Math.atan2(b[1] - a[1], b[0] - a[0]));
-      poly(g, [[6, 0], [-5, -5], [-5, 5]], true);
-      g.fillStyle = s.lineCol;
-      g.fill();
-      g.restore();
+      R.arrowHead(g, b, Math.atan2(b[1] - a[1], b[0] - a[0]), 7, 2.3, s.lineCol);
     }
     tickBadge(g, B.x + B.w - 24, B.y + 22, s.okK, 12, GREEN, GREEN_INK);
   }
@@ -156,7 +142,7 @@
 
         const ws = T < 4.5 ? walkSeg(T, 2.2, 2.65, FHOME, FX) : walkSeg(T, 5.45, 5.95, FX, FHOME);
         x = ws.x;
-        gait = T < 4.5 ? ws : { ph: -ws.ph, amp: ws.amp };
+        gait = T < 4.5 ? ws : { ph: -ws.ph, amp: ws.amp, stride: ws.stride };
         hop = Math.sin(Math.PI * seg(T, 1.05, 1.35)) * 7;
         const glance = bump(T, 0.45, 0.65, 0.75, 0.9);
         const away = bump(T, 0.75, 0.9, 0.98, 1.08);
@@ -172,15 +158,15 @@
         pose = mix(pose, P({ ...REST, head: [10, -116] }), glance);
         pose = mix(pose, P({ ...REST, head: [-3, -116] }), away);
         pose = mix(pose, ALARM, take);
-        pose = mix(pose, P({ hF: [9, -100], hB: [7, -98], head: [7, -114], chest: [2, -90] }), toMouth);
-        pose = mix(pose, P({ hF: [17 + rub, -76], hB: [13 - rub, -74], head: [6, -115] }), rubK);
+        pose = mix(pose, P({ hF: [9, -100], hB: [7, -98], head: [7, -114], chest: [2, -90], hang: 0 }), toMouth);
+        pose = mix(pose, P({ hF: [17 + rub, -76], hB: [13 - rub, -74], head: [6, -115], hang: 0 }), rubK);
         const knob = lp(tipAt(ang), x, 0, 1);
-        pose = mix(pose, P({ hF: knob, hB: [knob[0] - 2, knob[1] + 3], head: [5, -115] }), grab);
+        pose = mix(pose, P({ hF: knob, hB: [knob[0] - 2, knob[1] + 3], head: [5, -115], hang: 0 }), grab);
         const lean = 0.35 + 0.65 * pull;
-        pose = mix(pose, P({ hF: knob, hB: [knob[0] - 2, knob[1] + 3], head: [-14 * lean + tremble, -116 + 6 * lean], chest: [-10 * lean + tremble, -90 + 4 * lean], hip: [-3, -57], fF: [17, -2.5], fB: [-15, -2.5], kF: [14, -32], kB: [-4, -32] }), heave);
+        pose = mix(pose, P({ hF: knob, hB: [knob[0] - 2, knob[1] + 3], head: [-14 * lean + tremble, -116 + 6 * lean], chest: [-10 * lean + tremble, -90 + 4 * lean], hip: [-3, -57], fF: [17, -2.5], fB: [-15, -2.5], kF: [14, -32], kB: [-4, -32], hang: 0 }), heave);
         pose = mix(pose, P({ hF: [14 + brush, -66], hB: [10 - brush, -64], head: [3, -119], chest: [-1, -90] }), dust);
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       const front = {
         bg: mixCol('#ffffff', C.red, flash * 0.8),
@@ -390,7 +376,7 @@
 
         const ws = T < 4.9 ? walkSeg(T, 2.15, 3.05, TX, TAT) : walkSeg(T, 5.0, 5.75, TAT, TX);
         x = ws.x;
-        gait = T < 4.9 ? ws : { ph: -ws.ph, amp: ws.amp };
+        gait = T < 4.9 ? ws : { ph: -ws.ph, amp: ws.amp, stride: ws.stride };
         const alarm = bump(T, 0.85, 1.05, 1.25, 1.45);
         const pocket = bump(T, 1.45, 1.7, 1.75, 1.95) + bump(T, 5.7, 5.95, 6.1, 6.35);
         const holdUp = bump(T, 1.75, 2.1, 2.95, 3.25) + bump(T, 4.5, 4.75, 5.7, 5.95);
@@ -408,7 +394,7 @@
         pose = mix(pose, P({ hF: lp(wv, x, 0, 1), hB: [-4, -54], head: [9, -114], chest: [3, -90] }), windA);
         pose = mix(pose, P({ hF: [22, -98], hB: [-4, -54], head: [4, -118] }), look);
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       const ks = {
         p,
@@ -556,7 +542,7 @@
 
         const ws = T < 4.6 ? walkSeg(T, 1.1, 1.95, HOME, AT) : walkSeg(T, 5.25, 6.1, AT, HOME);
         x = ws.x;
-        gait = T < 4.6 ? ws : { ph: -ws.ph, amp: ws.amp };
+        gait = T < 4.6 ? ws : { ph: -ws.ph, amp: ws.amp, stride: ws.stride };
         const alarm = bump(T, 0.7, 0.95, 1.05, 1.25);
         const grab = bump(T, 1.9, 2.15, 2.7, 2.85);
         const strain = bump(T, 2.1, 2.35, 2.72, 3.0);
@@ -576,7 +562,7 @@
         pose = mix(pose, P({ hF: lp([CX - CW / 2 + 6, top([CX, y42]) - 1], x, 0, 1), hB: [-4, -54], head: [10, -114], chest: [4, -89] }), reach);
         pose = mix(pose, P({ hF: [16, -122], hB: [-4, -54], head: [4, -118] }), pump);
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       const blink = 0.55 + 0.45 * Math.abs(Math.sin(t * 9));
       crate(g, [CX, y42], 0, 'v42', mixCol(C.ink, GREEN_INK, good), mixCol('#ffffff', GREEN, good), 0);

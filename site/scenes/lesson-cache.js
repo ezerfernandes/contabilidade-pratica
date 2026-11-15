@@ -21,6 +21,34 @@
   const CARRY = P({ hF: [18, -72], hB: [-4, -54], head: [6, -116] });
   const TOSS = P({ hF: [30, -70], hB: [-4, -54], head: [9, -113], chest: [4, -89] });
   const NOD = P({ hF: [12, -60], hB: [-4, -52], head: [8, -112] });
+  // The two walks are stretched by `extra` seconds; every other beat keeps its length and just shifts later.
+  const SLOW = [[1.7, 2.8, 0.4], [3.35, 4.55, 0.4]];
+  function beatTime(tn) {
+    let off = 0;
+    for (const [a, b, extra] of SLOW) {
+      if (tn < a + off) {
+        return tn - off;
+      }
+      if (tn < b + off + extra) {
+        return a + ((tn - a - off) * (b - a)) / (b - a + extra);
+      }
+      off += extra;
+    }
+    return tn - off;
+  }
+  // Speeds up, cruises, slows down: a lower top speed than E.soft over the same time, so the long walks stay a walk.
+  const RAMP = 0.2;
+  function cruise(k) {
+    const up = (q) => q / 2 - (RAMP / (2 * Math.PI)) * Math.sin((Math.PI * q) / RAMP);
+    const total = 1 - RAMP;
+    if (k <= RAMP) {
+      return up(k) / total;
+    }
+    if (k >= 1 - RAMP) {
+      return 1 - up(1 - k) / total;
+    }
+    return (RAMP / 2 + (k - RAMP)) / total;
+  }
 
   function file(g, cx, by, s, fill, a) {
     if (a <= 0) {
@@ -131,11 +159,11 @@
   }
 
   SC['lesson-cache'] = {
-    dur: 8.6,
+    dur: 9.4,
     width: 560,
     label: 'A request for user 7 finds the cache shelf empty, so a stick figure walks all the way to the database and back in 1.2 seconds, keeps a copy on the cache shelf, and answers the next request for user 7 from the shelf in 0.01 seconds.',
     draw(g, S) {
-      const T = S.on ? S.u * this.dur : -1;
+      const T = S.on ? beatTime(S.u * this.dur) : -1;
       const t = S.t;
       let x = HOME, face = 1, gait = { ph: 0, amp: 0 };
       let pose = breathe(REST, t);
@@ -149,8 +177,8 @@
         step = T < 4.8 ? 1 : T < 6.1 ? 2 : T < 7.9 ? 3 : 0;
         const reset = seg(T, 7.9, 8.4);
 
-        const w1 = walkSeg(T, 1.7, 2.8, HOME, AT_DB);
-        const w2 = walkSeg(T, 3.35, 4.55, AT_DB, HOME);
+        const w1 = walkSeg(T, 1.7, 2.8, HOME, AT_DB, null, cruise);
+        const w2 = walkSeg(T, 3.35, 4.55, AT_DB, HOME, null, cruise);
         const ws = T < 3.2 ? w1 : w2;
         x = ws.x;
         gait = ws;
@@ -208,7 +236,7 @@
           timerCol = GREEN_INK;
         }
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
       setStep(g, step);
 
       desk(g);

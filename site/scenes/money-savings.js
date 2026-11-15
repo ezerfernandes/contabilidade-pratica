@@ -176,7 +176,7 @@
             clinkN = i;
           }
         }
-        const cheer = E.back(seg(T, 4.5, 4.8)) * (1 - E.soft(seg(T, 6.4, 6.8)));
+        const cheer = E.back(seg(T, 4.42, 4.95)) * (1 - E.soft(seg(T, 6.4, 6.8)));
         const bounce = Math.abs(Math.sin((T - 4.5) * 9)) * 3 * seg(T, 4.6, 4.8) * (1 - seg(T, 6.0, 6.4));
         pose = mix(pose, P({ hF: [22, -128 - bounce], hB: [-14, -126 - bounce], head: [2, -117 - bounce * 0.5] }), cheer);
         done = seg(T, 3.3, 3.7) * fade;

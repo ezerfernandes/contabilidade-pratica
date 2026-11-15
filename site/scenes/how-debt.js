@@ -161,7 +161,7 @@
             rot[q] *= 1 - fix[q];
             const bump = Math.max(Math.sin(Math.PI * seg(T, c1 - 0.08, c1 + 0.06)) ** 2, Math.sin(Math.PI * seg(T, c2 - 0.08, c2 + 0.06)) ** 2);
             const edge = [TX + dx[q] + BW / 2 + 1 + 8 * (1 - bump), slot(q)[1]];
-            const tp = P({ hF: lp(edge, x, 0, -1), hB: [-4, -56], chest: [4, -89], head: [9, -114] });
+            const tp = P({ hF: lp(edge, x, 0, -1), hB: lp([place[0] + 4, place[1] + 3], x, 0, -1), chest: [4, -89], head: [9, -114] });
             tapPose = q === 0 ? tp : mix(tapPose, tp, E.soft(seg(T, c1 - 0.2, c1 - 0.08)));
           }
           pose = mix(pose, tapPose, E.soft(seg(T, PLACE, 4.39)));
@@ -180,7 +180,7 @@
           pose = mix(pose, breathe(REST, t), E.soft(seg(T, 5.7, 6.05)));
           tickK = seg(T, SLAM + 0.2, SLAM + 0.45) * (1 - seg(T, 6.2, 6.5));
         }
-        pose = legs(pose, gait.ph, gait.amp, { arms: false });
+        pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
         // tower: the steady base, plus whatever has been slapped on
         if (T < SLAM || T < 0) {
@@ -433,7 +433,7 @@
           light = clamp((v - 50) / 150, 0, 1) * E.soft(seg(T, 3.45, 3.9));
           if (light > 0) {
             const sw = Math.sin(gait.ph * Math.PI * 2) * 12;
-            pose = mix(pose, P({ hF: [4 - sw, -58], hB: [2 + sw, -56], head: [3, -118] }), light);
+            pose = mix(pose, P({ hF: [18 + sw * 0.45, -54], hB: [2 - sw, -56], head: [3, -118] }), light);
           }
           show = x < EXIT && x > ENTER;
 
@@ -453,7 +453,7 @@
           }
           groundA = 1 - E.soft(seg(T, RE + 0.1, RE + 0.6));
         }
-        pose = legs(pose, gait.ph, gait.amp, { arms: false });
+        pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
         const pf = packFrame(pose);
 
         for (let i = 0; i < 3; i++) {
@@ -573,7 +573,7 @@
     const BEE_OFF = [250, -200];
 
     const LEAN = { head: [10, -113], chest: [4, -89] };
-    const STARTLE = P({ hF: [20, -98], hB: [-12, -94], head: [-3, -118], chest: [-2, -91] });
+    const STARTLE = P({ hF: [22, -100], hB: [8, -78], head: [-3, -118], chest: [-2, -91] });
 
     function bed(g) {
       g.beginPath();
@@ -740,7 +740,7 @@
           }
 
           // double-take: glance back, look away, snap back with a hop
-          const jump = E.soft(seg(T, 2.3, 2.42)) * (1 - E.soft(seg(T, 2.5, 2.75)));
+          const jump = E.soft(seg(T, 2.25, 2.45)) * (1 - E.soft(seg(T, 2.5, 2.78)));
           pose = mix(pose, STARTLE, jump);
           y = -Math.sin(Math.PI * seg(T, 2.3, 2.52)) * 8;
           bang = seg(T, 2.3, 2.4) * (1 - seg(T, 2.7, 2.85));
@@ -760,7 +760,7 @@
           const cheer = E.soft(seg(T, 3.5, 3.85)) * (1 - E.soft(seg(T, 3.95, 4.3)));
           pose = mix(pose, CHEER, cheer);
         }
-        pose = legs(pose, gait.ph, gait.amp, { arms: false });
+        pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
         bed(g);
         const head = flower(g, h, t);

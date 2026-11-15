@@ -111,12 +111,12 @@
         x = ws.x;
         gait = ws;
         const reach = E.soft(seg(T, 0.7, 1.0));
-        const wind = E.soft(seg(T, 1.0, 1.3));
-        const flick = E.soft(seg(T, 1.3, 1.45));
+        const wind = E.soft(seg(T, 0.98, 1.2));
+        const flick = E.soft(seg(T, 1.2, 1.42));
         const settle = E.soft(seg(T, 1.8, 2.3));
         const lean = E.soft(seg(T, 2.9, 3.4)) * (1 - E.soft(seg(T, 5.0, 5.6)));
         const GRAB = P({ hF: lp([ENV_IN[0] - 4, ENV_IN[1] - 2], AT, 0, 1), hB: [12, -72], head: [9, -114], chest: [4, -89] });
-        const WIND = P({ hF: [-24, -68], hB: [12, -72], head: [5, -116], chest: [-2, -90] });
+        const WIND = P({ hF: [-28, -60], hB: [12, -72], head: [5, -116], chest: [-2, -90], ef: 0 });
         const FLICK = P({ hF: [36, -100], hB: [12, -72], head: [9, -116], chest: [3, -90] });
         pose = mix(pose, GRAB, reach);
         pose = mix(pose, WIND, wind);
@@ -141,7 +141,7 @@
         sipK = lean;
         steam = lerp(0.6, 1, lean);
       }
-      pose = legs(pose, gait.ph, gait.amp, { arms: false });
+      pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
       table(g);
       trayBack(g);

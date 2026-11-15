@@ -343,7 +343,7 @@
   const H0 = 62, H1 = 126;
   const SLEAVES = [[0.32, 1], [0.62, 1], [0.9, -1]];
   const WATERP = P({ hF: [34, -80], hB: [-4, -54], head: [8, -114] });
-  const STARTLE = P({ hF: [14, -96], hB: [-12, -96], head: [3, -120], chest: [-4, -90] });
+  const STARTLE = P({ hF: [14, -96], hB: [8, -98], head: [3, -120], chest: [-4, -90] });
 
   function pot(g, x, top, w, h) {
     R.poly(g, [[x - w / 2, top], [x + w / 2, top], [x + w / 2 - 6, top + h], [x - w / 2 + 6, top + h]], true);
