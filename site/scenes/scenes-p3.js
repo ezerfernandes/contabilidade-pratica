@@ -594,14 +594,14 @@
     dur: 6.2,
     draw(g, S) {
       const T = S.on ? S.u * this.dur : -1;
-      const READ = P({ hF: [30, -94], hB: [24, -90], head: [7, -113] });
+      const READ = P({ hF: [32, -80], hB: [26, -76], head: [8, -112] });
       const FEED = (hy, xx) => P({ hF: lp([4, hy], xx, 0), hB: [-3, -52], head: [9, -115], chest: [3, -90] });
       const PICK = P({ hB: lp([-93, -68], -60, 0), hF: [6, -56], chest: [-5, -89], head: [-7, -114], eb: -1 });
       let x = -60, pose, sheet = null, sheetIn = null, jy = -96, ca = -Math.PI / 2, gear = S.t * 0.4, shake = 0, light = Math.sin(S.t * 2) > 0.6, pickK = -1;
       const knob = () => [-10 + Math.cos(ca) * 8, -66 + Math.sin(ca) * 8];
       if (T < 0) {
         pose = breathe(READ, S.t);
-        pose.head = [7, -113 + Math.sin(S.t * 1.3) * 1.5];
+        pose.head = [8, -112 + Math.sin(S.t * 1.3) * 1.5];
         sheet = 'hand';
       } else {
         jy = T < 2.9 ? lerp(-96, -40, E.in(seg(T, 0, 0.45))) : lerp(-40, -110, E.back(seg(T, 2.9, 3.3)));
@@ -683,9 +683,9 @@
         held: (gg, J) => held(gg, J, (hf, hb) => {
           if (sheet === 'hand') {
             const up = T >= 0.7 && T < 1.25 ? E.soft(seg(T, 0.7, 0.95)) : 0;
-            ySheet(gg, hf[0] + lerp(-2, 14, up), hf[1] + lerp(-4, -14, up), lerp(-0.08, 0, up), false);
+            ySheet(gg, hf[0] + lerp(4, 14, up), hf[1] + lerp(2, -14, up), lerp(-0.08, 0, up), false);
           } else if (pickK >= 0) {
-            const p = L2([hb[0] + 2, hb[1] - 6], [hf[0] - 2, hf[1] - 4], pickK);
+            const p = L2([hb[0] + 2, hb[1] - 6], [hf[0] + 4, hf[1] + 2], pickK);
             ySheet(gg, p[0], p[1], lerp(-0.4, -0.08, pickK), false);
           }
         }),
@@ -723,7 +723,7 @@
       const x = -8;
       const DRUM = (t) => P({ hF: lp([8 + Math.max(0, Math.sin(t * 9)) * 2, -57 - Math.max(0, Math.sin(t * 9)) * 2.5], x, 0), hB: [-4, -52], head: [6, -115] });
       const BELL = (k) => P({ hF: lp([22, lerp(-66, -60, k)], x, 0), hB: [-4, -52], head: [9, -114], chest: [3, -90] });
-      const WAIT = (t, tap) => P({ hF: [22, -84], hB: [-4, -54], head: [6 + pulse(t, 2.2, 0.4, 1.2) * 4, -115 - pulse(t, 2.2, 0.4, 1.2) * 3], fF: [10, -2.5 - tap * 4], kF: [28, -34] });
+      const WAIT = (t, tap) => P({ hF: [24, -70], hB: [-4, -54], head: [6 + pulse(t, 2.2, 0.4, 1.2) * 4, -115 - pulse(t, 2.2, 0.4, 1.2) * 3], fF: [10, -2.5 - tap * 4], kF: [28, -34] });
       const PROUD = P({ hF: [20, -112], hB: [-4, -54], head: [8, -118] });
       let pose, ticket = null, done = 0, open = 0, orb = -1, bellK = 0, rise = -1;
       if (T < 0) {
@@ -737,14 +737,14 @@
           pose = mix(DRUM(S.t), BELL(bellK), E.soft(seg(T, 0, 0.4)));
           rise = seg(T, 0.5, 0.75);
         } else if (T < 1.15) {
-          pose = mix(BELL(0), P({ hF: lp([22, -78], x, 0), hB: [-4, -52], head: [9, -114] }), E.soft(seg(T, 0.75, 1.0)));
+          pose = mix(BELL(0), P({ hF: lp([8, -70], x, 0), hB: [-4, -52], head: [9, -114] }), E.soft(seg(T, 0.75, 1.0)));
           rise = 1;
           if (T > 1.0) {
             rise = -1;
             ticket = 'hand';
           }
         } else if (T < 4.1) {
-          pose = mix(P({ hF: lp([22, -78], x, 0), hB: [-4, -52], head: [9, -114] }), breathe(WAIT(T, T > 1.6 && T < 3.3 ? tap : 0), S.t), E.soft(seg(T, 1.15, 1.6)));
+          pose = mix(P({ hF: lp([8, -70], x, 0), hB: [-4, -52], head: [9, -114] }), breathe(WAIT(T, T > 1.6 && T < 3.3 ? tap : 0), S.t), E.soft(seg(T, 1.15, 1.6)));
           ticket = 'hand';
           if (T > 3.55) {
             orb = E.io(seg(T, 3.55, 4.1));
@@ -826,7 +826,7 @@
             const fade = T >= 5.2 ? 1 - seg(T, 5.3, 5.6) : 1;
             gg.save();
             gg.globalAlpha *= fade;
-            tw = [h[0] + 8, h[1] - 14];
+            tw = [h[0] + 26, h[1] - 4];
             prTicket(gg, tw[0], tw[1], -0.06, done, S.t);
             gg.restore();
           }
@@ -1372,9 +1372,9 @@
     dur: 6.4,
     draw(g, S) {
       const T = S.on ? S.u * this.dur : -1;
-      const HOLD = P({ hF: [18, -74], hB: [-4, -53], head: [6, -115] });
+      const HOLD = P({ hF: [16, -62], hB: [-4, -53], head: [6, -115] });
       const SWIPE = (k, xx) => P({ hF: lp([-26, lerp(-80, -62, k)], xx, 0), hB: [-4, -53], head: [9, -114], chest: [3, -90] });
-      const LOOK = P({ hF: [16, -96], hB: [-4, -53], head: [8, -110] });
+      const LOOK = P({ hF: [14, -58], hB: [-4, -53], head: [11, -110] });
       let x = -104, pose, enc = 0, status = 0, lift = 0, alpha = 1, buzz = 0;
       if (T < 0) {
         pose = breathe(HOLD, S.t);
@@ -1449,16 +1449,6 @@
       ln(g, -24, -63, 0, -63, 2.4, '#3a3a3a');
       g.restore();
       ytBadge(g, -12, -46);
-      fig(g, pose, x, 0, {
-        alpha,
-        wave: S.wave, wt: S.wt,
-        held: (gg, J) => held(gg, J, (h) => {
-          gg.save();
-          gg.globalAlpha *= alpha;
-          baCard(gg, h[0] + 9, h[1] - 6, -0.06, enc, S.t);
-          gg.restore();
-        }),
-      });
       rr(g, 30, -52, 12, 52, 2);
       inkFill(g, C.steel, 1.4);
       g.save();
@@ -1476,6 +1466,16 @@
       g.restore();
       circle(g, 36, -46, 3.4);
       inkFill(g, C.paper, 1.3);
+      fig(g, pose, x, 0, {
+        alpha,
+        wave: S.wave, wt: S.wt,
+        held: (gg, J) => held(gg, J, (h) => {
+          gg.save();
+          gg.globalAlpha *= alpha;
+          baCard(gg, h[0] + 9, h[1] - 6, -0.06, enc, S.t);
+          gg.restore();
+        }),
+      });
       if (T >= 0) {
         sparks(g, -12, -92, seg(T, 2.3, 2.9), 12, 5, C.greenInk);
       }
@@ -1829,7 +1829,7 @@
       const x = -22;
       const TYPE = (t, k) => P({ hF: lp([-50 + Math.sin(t * 23) * 2 * k, -56 - Math.max(0, Math.sin(t * 23)) * 3 * k], x, 0, -1), hB: lp([-58 + Math.sin(t * 19) * 2 * k, -55 - Math.max(0, Math.sin(t * 19 + 1)) * 3 * k], x, 0, -1), head: [8, -113], chest: [3, -89] });
       const CATCH = P({ hF: lp([-62, -98], x, 0, -1), hB: [-4, -53], head: [9, -116], chest: [3, -90] });
-      const HOLDB = P({ hF: [20, -80], hB: [-4, -53], head: [7, -115] });
+      const HOLDB = P({ hF: [20, -72], hB: [-4, -53], head: [7, -115] });
       const WIND = P({ hF: [-26, -56], hB: [12, -60], head: [3, -116], chest: [-3, -90], ef: 0 });
       const THROW = P({ hF: [36, -100], hB: [-6, -56], head: [12, -114], chest: [6, -89] });
       let sx = -1, pose, typed = 0, rows = 0, bill = null, fly = -1, msg = 0, react = 0, oldUp = 0, clear = 0;
@@ -1934,7 +1934,8 @@
         wave: S.wave, wt: S.wt,
         held: (gg, J) => held(gg, J, (h) => {
           if (bill === 'hand') {
-            awBill(gg, h[0] + 6 * Math.sign(sx), h[1] - 10, -0.1 * Math.sign(sx), 1);
+            const out = T < 0 ? 0 : E.soft(seg(T, 2.15, 2.55)) * (1 - E.soft(seg(T, 2.8, 3.1)));
+            awBill(gg, h[0] + lerp(6, 28, out) * Math.sign(sx), h[1] + lerp(-10, -4, out), -0.1 * Math.sign(sx), 1);
           }
         }),
       });

@@ -299,6 +299,7 @@
         }
         pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
+        streaks(g, streak);
         g.save();
         g.translate(-cam, 0);
         if (T >= 0 && T < 5.7) {
@@ -346,6 +347,7 @@
         }
         let J = null;
         if (show) {
+          // alpha just under 1 while the camera pans: motion.mjs reads joints and head pixels in world space and can't see the pan
           J = fig(g, pose, x, 0, { sx: face, wave: S.wave, wt: S.wt });
           can(g, [J.w.handB[0] + 6, J.w.handB[1] + 4], canTilt);
           if (water > 0.3) {
@@ -366,7 +368,6 @@
           }
         }
         g.restore();
-        streaks(g, streak);
       },
     };
   })();
@@ -451,6 +452,7 @@
         }
         pose = legs(pose, gait.ph, gait.amp, { arms: false, stride: gait.stride });
 
+        streaks(g, streak);
         g.save();
         g.translate(-cam, 0);
         ladder(g, LAD);
@@ -479,6 +481,7 @@
           }
         }
         if (show) {
+          // alpha just under 1 while the camera pans: motion.mjs reads joints and head pixels in world space and can't see the pan
           const J = fig(g, pose, x, y, { floor: y, wave: S.wave, wt: S.wt });
           if (held) {
             coin(g, J.w.handF[0] + 2, J.w.handF[1] - 6 - coinUp * 22, 6, coinUp * 9);
@@ -492,7 +495,6 @@
           }
         }
         g.restore();
-        streaks(g, streak);
       },
     };
   })();

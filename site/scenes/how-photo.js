@@ -116,7 +116,7 @@
   const TOSS = P({ hF: [34, -104], head: [8, -115] });
   const POURK = P({ hB: [34, -96], head: [8, -114], chest: [2, -90] });
   const REL_K = [KFX + 34 * FS, -104 * FS];
-  const NOSE = [KFX + 11, -99];
+  const NOSE = [KFX + 26, -103];
 
   function room(g) {
     g.beginPath();
@@ -495,7 +495,7 @@
   const HOLD = P({ hF: [20, -80], hB: [-4, -52] });
   const PLACE = P({ hF: lp([GX, -56], WFX, 0, 1), hB: [-4, -54], head: [9, -112], chest: [4, -88] });
   const CHEER = P({ hF: [14, -132], hB: [-10, -130], head: [3, -118] });
-  const GIGGLE = P({ hF: [12, -96], hB: [-4, -54], head: [4, -114] });
+  const GIGGLE = P({ hF: [18, -88], hB: [-4, -54], head: [4, -114] });
 
   function stool(g) {
     ln(g, STOOL.x0 + 8, STOOL.y, STOOL.x0 + 2, 0, 2.4);
@@ -675,7 +675,7 @@
       sparks(g, WP.x + 6, -172, seg(T, 4.45, 4.85), 12, 6, C.muted);
       floatText(g, 'burp!', tip[0] + 44, tip[1] - 4, burp.k, C.ink, 12);
       sparks(g, tip[0], tip[1] - 6, seg(T, 4.7, 5.3), 20, 7, C.amber);
-      happyEyes(g, J.w.head, seg(T, 3.7, 3.8) * (1 - seg(T, 4.3, 4.4)));
+      floatText(g, 'hehe', J.w.head[0] - 16, J.w.head[1] - 14, seg(T, 3.65, 4.4), C.umber, 10);
     },
   };
 })();

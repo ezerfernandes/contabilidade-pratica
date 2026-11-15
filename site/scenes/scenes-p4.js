@@ -1242,7 +1242,7 @@
             gg.restore();
           }
         },
-        held: (gg, J) => {
+        behind: (gg, J) => {
           if (inHand < 0 || !carry) {
             return;
           }
@@ -1313,9 +1313,10 @@
         press = Math.sin(Math.PI * seg(T, 1.0, 1.2));
         const pk = E.io(seg(T, 1.3, 2.2));
         const r0 = [card[0], card[1], card[2], card[3]], r1 = [clipC[0] - 14, clipC[1] - 12, 28, 17];
-        const cr = lr(r0, r1, pk);
+        const kx = E.in(pk), ky = E.out(pk);
+        const cr = [lerp(r0[0], r1[0], kx), lerp(r0[1], r1[1], ky), lerp(r0[2], r1[2], pk), lerp(r0[3], r1[3], pk)];
         const lift = -Math.sin(Math.PI * pk) * 6;
-        const grip = [cr[0] + lerp(4, cr[2] - 4, pk), cr[1] + cr[3] * 0.55 - lift];
+        const grip = [cr[0] + lerp(4, cr[2] - 4, pk * pk), cr[1] + cr[3] * 0.55 - lift];
         const gl = lp(grip, x, 0);
         const CARRY = P({ hF: gl, hB: IDLE.hB, head: [6, -113], chest: [2, -90], ef: lerp(0.15, 1, E.sm(clamp((gl[0] - 2) / 16, 0, 1))) });
         if (T < 1.3) {
