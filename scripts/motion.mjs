@@ -4,6 +4,7 @@
 //
 // jump              a joint teleports between two frames (a snap or twitch)
 // arm-through-face  the near arm passes through the head
+// head-covered     something is drawn over a figure's head (a note, a prop, a bubble)
 // bent-back-elbow   an elbow bends the wrong way (the forearm folds backwards)
 // elbow-out-back    the upper arm swings back and the forearm folds forward to a low hand (a broken wing)
 // squash            a figure is squashed sideways (turn it with sx = ±1 instead)
@@ -55,7 +56,7 @@ if (!runtime.includes(hook)) {
   process.exit(1);
 }
 const rec = `    if (window.__rec) {
-      window.__rec.push({ x, y, s, sx, sh, handF, handB, eF, eB, hc, fF: p.fF, fB: p.fB, kF, kB, wantF: Math.hypot(p.hF[0] - sh[0], p.hF[1] - sh[1]), alpha: opt.alpha ?? 1 });
+      window.__rec.push({ x, y, s, sx, sh, handF, handB, eF, eB, hc, fF: p.fF, fB: p.fB, kF, kB, wantF: Math.hypot(p.hF[0] - sh[0], p.hF[1] - sh[1]), alpha: opt.alpha ?? 1, ink: opt.ink || C.ink, bot: !!opt.bot, m: (() => { const t = g.getTransform(); return [t.a, t.b, t.c, t.d, t.e, t.f]; })() });
     }
 `;
 const instrumented = runtime.replace(hook, rec + hook);
@@ -88,10 +89,44 @@ const data = await p.evaluate(async (id) => {
   const def = window.STICK.SCENES[id];
   const FPS = 60, T0 = 5;
   const out = [];
+  const v = el.v;
+  const g2 = v.cv.getContext('2d');
+  const hex = (c) => {
+    const m = /^#?([0-9a-f]{6})$/i.exec(c || '');
+    return m ? [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16)] : null;
+  };
+  // A head is a solid disc in the figure's ink. Sample it after the whole frame is drawn: if most of it
+  // isn't ink any more, something was drawn on top of the face.
+  const covered = (f) => {
+    const ink = hex(f.ink);
+    if (!ink || f.bot || f.alpha < 1) {
+      return false;
+    }
+    // f.m is the canvas transform when fig() drew this figure, so camera pans and zooms are included.
+    const [ma, mb, mc, md, me, mf] = f.m;
+    const cx = f.x + f.hc[0] * f.s * f.sx, cy = f.y + f.hc[1] * f.s, r = 7.8 * f.s * 0.55;
+    let off = 0;
+    for (const [dx, dy] of [[0, 0], [r, 0], [-r, 0], [0, r], [0, -r]]) {
+      const wx = cx + dx, wy = cy + dy;
+      const px = Math.round(ma * wx + mc * wy + me), py = Math.round(mb * wx + md * wy + mf);
+      if (px < 0 || py < 0 || px >= v.cv.width || py >= v.cv.height) {
+        continue;
+      }
+      const d = g2.getImageData(px, py, 1, 1).data;
+      if (Math.abs(d[0] - ink[0]) + Math.abs(d[1] - ink[1]) + Math.abs(d[2] - ink[2]) > 90) {
+        off++;
+      }
+    }
+    return off >= 3;
+  };
   const snap = (o, T, phase) => {
     window.__rec = [];
     window.STICK.at(el, o);
-    out.push({ T, phase, figs: JSON.parse(JSON.stringify(window.__rec)) });
+    const figs = JSON.parse(JSON.stringify(window.__rec));
+    figs.forEach((f) => {
+      f.covered = covered(f);
+    });
+    out.push({ T, phase, figs });
     window.__rec = null;
   };
   for (let i = 0; i < 30; i++) {
@@ -154,6 +189,9 @@ F.forEach((fr, i) => {
       if (lu > 1 && lv > 1 && u[0] / lu < -0.55 && v[0] / lv > 0.25 && v[1] > 0) {
         add('elbow-out-back', fr.T, `fig${k} ${name} arm`);
       }
+    }
+    if (f.covered) {
+      add('head-covered', fr.T, `fig${k}`);
     }
     if (fr.phase === 'act' && f.wantF > ARM + 10) {
       add('reach-short', fr.T, `fig${k} by ${(f.wantF - ARM).toFixed(0)}`);
