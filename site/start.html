@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Get Started with Stick Scene</title>
+<meta name="description" content="Install the /stick-scene skill, ask your agent for a scene, and put it on any page.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+.doc > div { min-width: 0; }
+.doc { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding-block: 56px 96px; }
+.toc { position: sticky; top: 84px; align-self: start; display: grid; gap: 2px; font-size: 14px; }
+.toc a { text-decoration: none; color: var(--body); padding: 6px 10px; border-radius: 8px; }
+.toc a:hover { background: var(--paper); color: var(--ink); }
+.toc a.on { background: var(--paper); color: var(--ink); font-weight: 500; }
+.doc h1 { font-size: clamp(36px, 5vw, 56px); line-height: 1; letter-spacing: -.045em; font-weight: 500; margin: 10px 0 0; }
+.doc .lede { font-size: 18px; color: var(--body); margin: 16px 0 0; max-width: 640px; }
+.step { padding-top: 56px; scroll-margin-top: 80px; }
+.step h2 { display: flex; align-items: baseline; gap: 12px; font-size: 28px; letter-spacing: -.03em; font-weight: 500; margin: 0; }
+.step h2 .n { font-family: var(--mono); font-size: 13px; color: var(--muted); font-weight: 400; }
+.step > p { color: var(--body); margin: 10px 0 0; max-width: 680px; }
+.step .cmd { margin-top: 18px; }
+.prompts { margin-top: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.prompt { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+.prompt .k { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.prompt code { font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+.prompt button { align-self: flex-start; height: 26px; padding: 0 10px; border-radius: 7px; border: 1px solid var(--line-strong); background: #fff; font: 500 12px var(--sans); cursor: pointer; }
+.prompt button:hover { border-color: var(--ink); }
+.asks { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+.asks span { border: 1px dashed var(--line-strong); border-radius: 999px; padding: 6px 12px; font-size: 14px; color: var(--body); background: var(--paper); }
+.code-wrap { position: relative; margin-top: 18px; }
+.table-wrap { overflow-x: auto; margin-top: 18px; border: 1px solid var(--line); border-radius: 14px; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14.5px; }
+th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 500; color: var(--muted); font-size: 13px; background: var(--paper); }
+td code { background: var(--paper); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+.split { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.faq { margin-top: 18px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq details:last-child { border-bottom: 0; }
+.faq summary { cursor: pointer; padding: 14px 18px; font-weight: 500; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font-family: var(--mono); color: var(--muted); }
+.faq details[open] summary::after { content: "−"; }
+.faq details p { margin: 0; padding: 0 18px 16px; color: var(--body); max-width: 680px; }
+@media (max-width: 900px) {
+  .doc { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .toc { display: none; }
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .prompts { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<header data-nav></header>
+<main class="wrap doc">
+  <nav class="toc" aria-label="On this page" data-toc>
+    <a href="#install">Install</a>
+    <a href="#ask">Ask for a scene</a>
+    <a href="#change">Ask for changes</a>
+    <a href="#embed">Put it on a page</a>
+    <a href="#options">Options</a>
+    <a href="#faq">Questions</a>
+  </nav>
+  <div>
+    <div class="eyebrow">Get started</div>
+    <h1>Your first scene in a few minutes</h1>
+    <p class="lede">Install the skill once, describe what you want explained, and your agent writes the scene, checks it frame by frame and adds it to your page.</p>
+
+    <div class="step" id="install">
+      <h2><span class="n">01</span>Install the skill</h2>
+      <p>It works with Claude Code, Codex and other agents that support skills.</p>
+      <div class="cmd"><span class="p">$</span><code id="cmd-install">npx skills add nilbuild/stick-scene</code><button type="button" data-copy="#cmd-install">Copy</button></div>
+    </div>
+
+    <div class="step" id="ask">
+      <h2><span class="n">02</span>Ask for a scene</h2>
+      <p>Say what it should explain and where it goes. Be as broad or as specific as you like. It will pitch two or three ideas for you to pick from.</p>
+      <div class="prompts" data-prompts></div>
+    </div>
+
+    <div class="step" id="change">
+      <h2><span class="n">03</span>Ask for changes</h2>
+      <p>If something looks off, say what's wrong and it re-draws and re-checks the scene.</p>
+      <div class="asks">
+        <span>the note covers his face</span><span>the bubble runs off the edge</span><span>slower, please</span><span>make the robot think before it starts</span><span>loop it</span><span>use our brand green</span><span>add a second agent in teal</span><span>light up the steps on the page as it plays</span>
+      </div>
+    </div>
+
+    <div class="step" id="embed">
+      <h2><span class="n">04</span>Put it on a page</h2>
+      <p>Your agent usually does this for you. Copy the runtime and the scene into your static folder and add a tag. Size it with CSS.</p>
+      <div class="split">
+        <div class="code-wrap"><pre class="code" id="embed-code"><span class="t">&lt;stick-scene</span> <span class="a">scene</span>=<span class="s">"learn-fractions"</span> <span class="a">play</span>=<span class="s">"view"</span>
+  <span class="a">style</span>=<span class="s">"height: 230px"</span><span class="t">&gt;&lt;/stick-scene&gt;</span>
+
+<span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"/scenes/stick.js"</span> <span class="a">defer</span><span class="t">&gt;&lt;/script&gt;</span>
+<span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"/scenes/learn-fractions.js"</span> <span class="a">defer</span><span class="t">&gt;&lt;/script&gt;</span></pre><button type="button" class="copy" data-copy="#embed-code">Copy</button></div>
+        <div class="stage-card"><stick-scene scene="learn-fractions" play="view" label="A figure slices a pizza into quarters and eats one."></stick-scene></div>
+      </div>
+      <p style="margin-top:14px" class="muted">Load <code>stick.js</code> before any scene file. In React or Astro, add the scripts once in your layout and use the tag anywhere.</p>
+    </div>
+
+    <div class="step" id="options">
+      <h2><span class="n">05</span>Options</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Attribute</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>scene</code></td><td>The id the scene registers.</td></tr>
+            <tr><td><code>play="view"</code></td><td>Plays once when half of it scrolls into view, then on click. The best default.</td></tr>
+            <tr><td><code>play="click"</code></td><td>Waits for a click or Enter.</td></tr>
+            <tr><td><code>play="hover"</code></td><td>Loops while the mouse is over it. On touch screens, a tap plays it.</td></tr>
+            <tr><td><code>play="loop"</code></td><td>Plays forever. Use it for loading states, and sparingly.</td></tr>
+            <tr><td><code>play="idle"</code></td><td>Never plays the action, only the quiet idle.</td></tr>
+            <tr><td><code>no-floor</code></td><td>Drops the grey band under the ground line, for plain white pages.</td></tr>
+            <tr><td><code>no-ground</code></td><td>Drops the ground line too.</td></tr>
+            <tr><td><code>zoom</code></td><td>Scales the drawing inside its box. Default <code>1</code>.</td></tr>
+            <tr><td><code>label</code></td><td>What a screen reader hears. Defaults to the scene's own sentence.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step" id="faq">
+      <h2><span class="n">06</span>Questions</h2>
+      <div class="faq">
+        <details><summary>Does it need a library or a build step?</summary><p>No. The runtime is one plain JavaScript file that defines the <code>&lt;stick-scene&gt;</code> tag. Each scene is one more file.</p></details>
+        <details><summary>Is it accessible?</summary><p>The skill writes a sentence for screen readers into each scene. Scenes can be played with the keyboard, and show one still frame when the visitor prefers reduced motion.</p></details>
+        <details><summary>Will lots of scenes slow the page down?</summary><p>Scenes that are off screen don't draw at all, and the idle is cheap. This site runs more than forty on one page.</p></details>
+        <details><summary>Can it match my brand?</summary><p>Ask for your colours in the scene, or swap palette colours for the whole page with <code>STICK.theme({ butter: '#…' })</code>.</p></details>
+        <details><summary>Can I use a scene from the gallery?</summary><p>Yes. Open any scene in the <a href="gallery.html">gallery</a> and copy its code. The files are in the skill's <code>examples</code> folder.</p></details>
+        <details><summary>What does it cost?</summary><p>Nothing. The skill is MIT licensed. Your agent's usage is the only cost.</p></details>
+      </div>
+    </div>
+  </div>
+</main>
+<footer data-foot></footer>
+
+<script src="assets/catalog.js"></script>
+<script src="assets/site.js"></script>
+<script>
+  const S = window.SITE;
+  S.renderChrome('start');
+  S.loadScenes(['learn-fractions.js']);
+  const prompts = [
+    ['learn', 'Teaching', '/stick-scene explain how binary search works for my algorithms course'],
+    ['learn', 'Teaching', '/stick-scene show the water cycle for a year 4 science page'],
+    ['ideas', 'Ideas', '/stick-scene draw tech debt as something everyone in the meeting will get'],
+    ['product', 'Product UI', '/stick-scene add friendly empty, loading and 404 states to this app'],
+    ['product', 'Onboarding', '/stick-scene show our three setup steps and light them up on the page as it plays'],
+    ['dev', 'Developer tools', '/stick-scene show that our CLI turns a YAML file into JSON'],
+    ['life', 'Everyday', '/stick-scene a scene for the top of my pancake recipe'],
+    ['life', 'Anything', '/stick-scene one scene for each feature section on the homepage'],
+  ];
+  document.querySelector('[data-prompts]').innerHTML = prompts.map(([cat, name, text], i) => `<div class="prompt"><span class="k"><span class="dot ${cat}"></span>${name}</span><code id="p-${i}">${text}</code><button type="button" data-copy="#p-${i}">Copy</button></div>`).join('');
+  S.wireCopy();
+
+  const links = [...document.querySelectorAll('[data-toc] a')];
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) {
+        continue;
+      }
+      for (const a of links) {
+        a.classList.toggle('on', a.hash === '#' + e.target.id);
+      }
+    }
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  for (const a of links) {
+    const target = document.querySelector(a.hash);
+    if (target) {
+      io.observe(target);
+    }
+  }
+</script>
+</body>
+</html>
