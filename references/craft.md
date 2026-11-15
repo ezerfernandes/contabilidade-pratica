@@ -77,7 +77,7 @@ const fade = 1 - seg(T, this.dur - 0.45, this.dur);                         // m
 | Point / flick ahead | `{ hF: [40, -100], hB: [-4, -54], head: [10, -116] }` |
 | Arm up, about to slam | `{ hF: [22, -128], hB: [-4, -54], head: [6, -117] }` |
 | Cheer, both arms | `{ hF: [14, -132], hB: [-10, -130], head: [3, -118] }` |
-| Typing at a desk | `{ hF: [24, -58 ± bob], hB: [20, -56 ∓ bob] }`, bob = `Math.sin(t * 22) * 2.2` |
+| Typing at a desk | aim both hands at the keyboard: `hF: lp([keysX + 4, keysY + bob], x, 0, sx)`, `hB: lp([keysX - 6, keysY - bob], x, 0, sx)`, bob = `Math.sin(t * 22) * 2.2`; stand close enough that the keys are within reach |
 | Lean in | `chest: [4, -89], head: [10, -113]` |
 
 - **Touch a world point**: `hF: lp([wx, wy], x, 0, sx)`, which converts world coordinates to the figure's local ones.
@@ -176,6 +176,8 @@ The example files define their own small helpers at the top. Most have the same 
 - Text crammed against a box edge (a card title touching the top, a word filling a plank): give text at least 4 units of space above and below inside any box, and size boxes from the text (`pill`, or `tw(g, s, size)` plus padding). A 9px label wants a box at least 17 tall.
 - A solid triangle arrowhead: use `arrow`/`arcArrow`/`arrowHead`.
 - A mic held to the forehead: aim it at `J.mouth`.
+- Typing into thin air or onto the desk edge: a fixed typing pose only lands on the laptop if the figure happens to stand at the right distance. Aim the hands at the keys with `lp()`.
+- A badge or pill squeezed into a narrow header strip: use plain coloured text there instead.
 - A card or sign drawn over the hand that holds it: `R.frontArm(g, J)` after drawing it.
 - An elbow bent backwards (`ef`/`eb: -1`): the rig no longer allows it, and `motion.mjs` reports `bent-back-elbow` and `elbow-out-back` (a broken-wing back arm).
 
