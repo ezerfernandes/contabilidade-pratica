@@ -1691,11 +1691,13 @@
             gg.beginPath();
             gg.moveTo(top[0] - sw / 2, top[1]);
             gg.lineTo(top[0] + sw / 2, top[1]);
-            gg.quadraticCurveTo(hangX + sw / 2 + 4, -20, hangX + sw / 2, -4);
-            gg.lineTo(hangX - floorL, -4);
-            gg.lineTo(hangX - floorL, 0);
-            gg.lineTo(hangX + sw / 2 - 4, 0);
-            gg.quadraticCurveTo(hangX - sw / 2, -6, hangX - sw / 2, -20);
+            gg.quadraticCurveTo(hangX + sw / 2 + 4, -24, hangX + sw / 2, -10);
+            gg.quadraticCurveTo(hangX + sw / 2 - 2, 0, hangX + sw / 2 - 12, 0);
+            const end = Math.min(hangX - floorL, hangX - sw / 2 - 8);
+            gg.lineTo(end, 0);
+            gg.lineTo(end, -4);
+            gg.lineTo(hangX - sw / 2 - 6, -4);
+            gg.quadraticCurveTo(hangX - sw / 2, -4, hangX - sw / 2, -14);
             gg.closePath();
             inkFill(gg, C.paper, 1.3);
             gg.save();
@@ -1708,7 +1710,7 @@
               const cx = lerp(top[0], hangX, t);
               ln(gg, cx - sw / 2 + 4 + ind, yy, cx + sw / 2 - 4 - hash(i) * 6, yy, 1.4, '#c9c9c9');
             }
-            for (let xx = hangX - 6; xx > hangX - floorL; xx -= 6) {
+            for (let xx = hangX - sw / 2 - 8; xx > hangX - floorL; xx -= 6) {
               ln(gg, xx, -2, xx - 3, -2, 1.2, '#c9c9c9');
             }
             gg.restore();

@@ -3,803 +3,482 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stick Scene</title>
-<meta name="description" content="Describe an idea in one line. Your agent draws it as a little stick-figure scene that acts it out.">
-<meta property="og:title" content="stick-scene: describe it in one line, your agent draws it">
-<meta property="og:description" content="A skill for coding agents that turns one line into a small hand-drawn scene that acts your idea out. Lessons, docs, empty states, anything.">
+<title>stick-scene</title>
+<meta name="description" content="A skill for coding agents that turns one line into a little hand-drawn scene for your page.">
+<meta property="og:title" content="/stick-scene">
+<meta property="og:description" content="A skill for coding agents that turns one line into a little hand-drawn scene for your page.">
 <meta property="og:image" content="assets/og.png">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="stick-scene">
-<meta name="twitter:description" content="Describe an idea in one line. Your agent draws it as a little scene.">
+<meta name="twitter:title" content="/stick-scene">
+<meta name="twitter:description" content="A skill for coding agents that turns one line into a little hand-drawn scene for your page.">
 <meta name="twitter:image" content="assets/og.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&family=Geist+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: centred columns. Text leads sit in a 640px column, panels in 1040px, sections 140px apart. Light only. */
+/* Layout: one quiet page. A centred 720px plate (title, line, scene, topic pills, install) above a 1040px grid of every example that opens into a stepping viewer. Light only on purpose: the scenes are ink on white paper. */
 :root {
-  --bg: oklch(0.985 0 0);
-  --panel: #ffffff;
-  --raised: oklch(0.967 0 0);
-  --line: oklch(0.922 0 0);
-  --ink: oklch(0.145 0 0);
-  --secondary: oklch(0.439 0 0);
-  --tertiary: oklch(0.556 0 0);
-  --quaternary: oklch(0.708 0 0);
+  --bg: #ffffff;
+  --ink: oklch(0.2 0 0);
+  --body: oklch(0.42 0 0);
+  --muted: oklch(0.58 0 0);
+  --faint: oklch(0.74 0 0);
+  --line: oklch(0.93 0 0);
+  --pill: oklch(0.965 0 0);
+  --pill-hover: oklch(0.935 0 0);
+  --code: oklch(0.2 0.004 60);
+  --code-ink: oklch(0.93 0.005 80);
   --accent: #ff8c26;
-  --control: 0 0 0 0.5px oklch(0.145 0 0 / 0.08), 0 1px 2px oklch(0.145 0 0 / 0.06);
   --sans: 'Geist', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html { -webkit-font-smoothing: antialiased; background: var(--bg); }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
-::selection { background: oklch(0.9 0.08 75); }
-a { color: inherit; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--sans); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, p { margin: 0; }
+a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; }
-h1, h2, h3, p { margin: 0; text-wrap: pretty; }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
+stick-scene { display: block; }
 
-main { display: grid; justify-items: center; gap: 140px; padding-block: 0 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); overflow-x: clip; }
-.col { width: min(640px, 100%); }
-.wide { width: min(1040px, 100%); }
 
-/* Top bar */
-.top { width: min(1040px, calc(100% - 32px)); margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 0 0; }
-.top-brand { font: 500 14px var(--mono); text-decoration: none; color: var(--ink); }
-.top nav { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-.top nav a { padding: 6px 10px; border-radius: 8px; font-size: 13.5px; color: var(--tertiary); text-decoration: none; transition: color .15s, background-color .15s; }
-.top nav a:hover { color: var(--ink); background: var(--raised); }
+/* Plate */
+.plate { width: min(720px, 100%); margin: 0 auto; padding-block: 112px 0; display: grid; justify-items: center; text-align: center; }
+.plate h1 { font: 600 22px var(--mono); letter-spacing: -.02em; }
+.plate h1 span { color: var(--faint); }
+.plate .sub { margin-top: 10px; color: var(--body); font-size: 17px; max-width: 42ch; text-wrap: balance; }
+.links { margin-top: 14px; display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: var(--muted); }
+.links a { display: inline-flex; align-items: center; gap: 6px; transition: color .15s; }
+.links a:hover { color: var(--ink); }
+.links svg { width: 15px; height: 15px; }
+.stage { position: relative; width: min(720px, 100%); height: 320px; margin-top: 4px; touch-action: pan-y; }
+.stage stick-scene { height: 320px; width: 100%; }
+.slide { transition: opacity .35s ease, transform .35s ease; }
+.slide.out-l { opacity: 0; transform: translateX(-18px); }
+.slide.out-r { opacity: 0; transform: translateX(18px); }
+.slide.in-l { opacity: 0; transform: translateX(18px); transition: none; }
+.slide.in-r { opacity: 0; transform: translateX(-18px); transition: none; }
+.pills { margin-top: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.pills button { position: relative; height: 36px; padding: 0 16px; border: 0; border-radius: 99px; background: var(--pill); color: var(--body); font-size: 14.5px; overflow: hidden; transition: background-color .2s, color .2s; }
+.pills button:hover { background: var(--pill-hover); color: var(--ink); }
+.pills button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.pills button span { position: relative; }
+.pills.auto button[aria-pressed="true"]::before { content: ''; position: absolute; inset: 0; background: oklch(1 0 0 / .14); transform-origin: left; transform: scaleX(0); animation: fill var(--t, 6s) linear forwards; }
+@keyframes fill { to { transform: scaleX(1); } }
 
-/* Hero */
-.hero { position: relative; margin: 28px 0 -60px; border: 1px solid var(--line); border-radius: 24px; background: var(--panel); overflow: hidden; }
-.hq-top { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; }
-.intro .lede b { color: var(--ink); font-weight: 500; }
-.intro { padding: 64px 0 64px 56px; position: relative; z-index: 1; }
-.intro h1 { font-size: 40px; line-height: 44px; font-weight: 500; letter-spacing: -1px; }
-.intro .lede { margin-top: 12px; font-size: 24px; line-height: 31px; font-weight: 500; letter-spacing: -0.4px; color: var(--tertiary); max-width: 470px; }
-.cta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 28px; }
-.meta { margin-top: 18px; font: 13px/1 var(--mono); color: var(--quaternary); }
-.hq-stage { padding: 24px 24px 22px 0; }
-.hq-slot stick-scene { display: block; width: 100%; height: 290px; }
-.hq-pbar { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 5px 5px 5px 12px; border-radius: 10px; background: var(--bg); font: 13px/1.5 var(--mono); color: var(--quaternary); transition: box-shadow .15s, background-color .15s; }
-.hq-pbar i { font-style: normal; color: var(--quaternary); }
-.hq-pbar span { white-space: nowrap; }
-.hq-pbar input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: 13px/1.5 var(--mono); color: var(--secondary); padding: 4px 0; text-overflow: ellipsis; cursor: text; }
-.hq-pbar input::placeholder { color: var(--quaternary); }
-.hq-pbar button { flex: none; height: 28px; padding: 0 10px; border: 0; border-radius: 7px; font: 500 12px var(--sans); }
-.hq-try { width: 28px; padding: 0 !important; display: grid; place-items: center; background: #fff; color: var(--ink); box-shadow: var(--control); }
-.hq-try svg { width: 14px; height: 14px; }
-.hq-try:hover { background: var(--raised); }
-.hq-copy { display: none; background: var(--ink); color: #fff; }
-.hq-steps { display: flex; visibility: hidden; min-height: 20px; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 12px; padding-left: 2px; font-size: 12.5px; color: var(--tertiary); }
-.hq-steps b { display: inline-grid; place-items: center; width: 17px; height: 17px; margin-right: 6px; border-radius: 50%; background: var(--raised); font: 500 10.5px var(--mono); color: var(--secondary); }
-.hq-steps button { margin-left: auto; border: 0; background: none; padding: 0; font-size: 12.5px; color: var(--secondary); }
-.hq-steps button:hover { color: var(--ink); }
-.hq-stage.custom .hq-pbar { background: #fff; box-shadow: inset 0 0 0 1.5px var(--ink); }
-.hq-stage.custom .hq-pbar input { color: var(--ink); }
-.hq-stage.custom .hq-try { display: none; }
-.hq-stage.custom .hq-copy { display: block; }
-.hq-stage.custom .hq-steps { visibility: visible; }
-.hq-lower { position: relative; border-top: 1px solid var(--line); background: var(--bg); }
-.hq-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 20px 0; font: 12px var(--mono); color: var(--tertiary); }
-.hq-head b { color: var(--ink); font-weight: 500; }
-.hq-wrap { overflow: hidden; padding: 12px 0 18px; mask-image: linear-gradient(90deg, transparent, #000 60px, #000 calc(100% - 60px), transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 60px, #000 calc(100% - 60px), transparent); }
-.hq-track { display: flex; gap: 10px; width: max-content; animation: hq-slide 80s linear infinite; }
-.hq-wrap:hover .hq-track, .hq-wrap:focus-within .hq-track { animation-play-state: paused; }
-@keyframes hq-slide { to { transform: translateX(-50%); } }
-.hq-thumb { flex: none; width: 150px; border: 0; padding: 0; background: none; text-align: left; }
-.hq-thumb .f { height: 84px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; transition: box-shadow .2s; }
-.hq-thumb stick-scene { display: block; width: 100%; height: 84px; pointer-events: none; }
-.hq-thumb > span { display: block; margin-top: 6px; font-size: 12px; color: var(--tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.hq-thumb[aria-current="true"] .f { box-shadow: inset 0 0 0 2px var(--ink); }
-.hq-thumb[aria-current="true"] > span { color: var(--ink); }
-.hq-thumb.yours .f { display: grid; place-items: center; background: transparent; box-shadow: none; border: 1.5px dashed var(--quaternary); font-size: 13px; color: var(--secondary); }
-.hq-thumb.yours .f em { font-style: normal; font-size: 22px; line-height: 1; display: block; text-align: center; color: var(--tertiary); }
-.hq-thumb.yours:hover .f { border-color: var(--ink); color: var(--ink); }
-.hq-thumb.yours > span { color: var(--secondary); }
-@media (prefers-reduced-motion: reduce) { .hq-track, .pbar i, .sk-row.auto button .f::after { animation: none; } }
+.install { margin-top: 48px; display: inline-flex; align-items: center; gap: 12px; max-width: 100%; padding: 12px 12px 12px 18px; border-radius: 12px; background: var(--code); color: var(--code-ink); font: 14.5px var(--mono); }
+.install b { font-weight: 400; color: var(--accent); }
+.install code { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.copy { flex: none; display: grid; place-items: center; padding: 8px; margin: -8px -6px -8px 0; border: 0; background: none; color: oklch(1 0 0 / .5); transition: color .15s; }
+.copy:hover, .copy.done { color: var(--code-ink); }
+.copy svg { width: 15px; height: 15px; }
+.copy .i-done, .copy.done .i-copy { display: none; }
+.copy.done .i-done { display: block; }
+.copy:focus-visible, .icon:focus-visible { outline: none; }
+.note { margin-top: 12px; font-size: 13px; color: var(--muted); }
+.note code { font: 12.5px var(--mono); color: var(--body); }
 
-.btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 8px; border: 0; font-size: 14px; font-weight: 500; text-decoration: none; color: var(--ink); background: var(--raised); box-shadow: var(--control); transition: background-color .15s; white-space: nowrap; }
-.btn:hover { background: oklch(0.94 0 0); }
-.btn.primary { background: var(--ink); color: oklch(0.985 0 0); box-shadow: 0 10px 15px -3px oklch(0.145 0 0 / 0.15), 0 4px 6px -4px oklch(0.145 0 0 / 0.15); }
-.btn.primary:hover { background: oklch(0.269 0 0); }
-.btn.code { font-family: var(--mono); font-size: 13.5px; }
-.btn svg { width: 15px; height: 15px; flex: none; }
+/* Examples */
+.ex { width: min(1040px, 100%); margin: 120px auto 0; display: grid; gap: 28px; }
+.ex-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 24px; }
+.ex-head h2 { font-size: 15px; font-weight: 500; }
+.ex-head h2 span { color: var(--muted); font-weight: 400; margin-left: 6px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.tabs button { padding: 2px 0; border: 0; background: none; font-size: 13.5px; color: var(--muted); border-bottom: 1px solid transparent; transition: color .15s, border-color .15s; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.tabs em { font: 11.5px var(--mono); font-style: normal; color: var(--faint); margin-left: 4px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 28px; }
+.cell { display: grid; gap: 2px; padding: 0; border: 0; background: none; text-align: left; }
+.cell .f { border-radius: 10px; transition: background-color .2s; }
+.cell:hover .f { background: oklch(0.985 0 0); }
+.cell stick-scene { height: 180px; width: 100%; pointer-events: none; }
+.cell b { margin-top: 6px; font-size: 14px; font-weight: 500; }
+.cell code { font: 12px/1.5 var(--mono); color: var(--muted); transition: color .15s; }
+.cell:hover code { color: var(--body); }
+.more { justify-self: center; height: 36px; padding: 0 16px; border: 0; border-radius: 99px; background: var(--pill); color: var(--body); font-size: 14px; transition: background-color .15s, color .15s; }
+.more:hover { color: var(--ink); background: var(--pill-hover); }
 
-/* Section leads */
-.lead h2, .lead p { font-size: 24px; line-height: 32px; font-weight: 500; letter-spacing: -0.3px; }
-.lead p { color: var(--quaternary); }
-.section { display: grid; justify-items: center; gap: 48px; width: 100%; }
-.panel { display: grid; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); overflow: hidden; }
-.more { justify-self: start; display: inline-flex; gap: 6px; font-size: 14px; color: var(--tertiary); text-decoration: none; transition: color .15s; }
-.more:hover { color: var(--ink); }
-.more span { transition: translate .15s; }
-.more:hover span { translate: 2px 0; }
-.with-more { display: grid; gap: 16px; }
+/* Viewer */
+.lb { width: min(880px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 16px; background: var(--bg); color: var(--ink); box-shadow: 0 40px 100px -30px oklch(0 0 0 / .45); overflow: auto; }
+.lb::backdrop { background: oklch(0.2 0 0 / .4); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.lb[open] { animation: lb-in .22s ease-out; }
+@keyframes lb-in { from { opacity: 0; transform: translateY(8px) scale(.985); } }
+.lb-top { display: flex; align-items: center; gap: 10px; padding: 14px 14px 0 22px; font-size: 13px; color: var(--muted); }
+.lb-top .sp { flex: 1; }
+.lb-top i { font-style: normal; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.icon { width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--muted); transition: color .15s, background-color .15s; }
+.icon:hover { color: var(--ink); background: var(--pill); }
+.icon svg { width: 15px; height: 15px; }
+.lb-body { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; padding: 6px 12px 0; }
+.lb-body .icon { width: 40px; height: 40px; background: var(--pill); }
+.lb-body .icon:hover { background: var(--pill-hover); }
+.lb-stage { height: 380px; }
+.lb-stage stick-scene { height: 380px; width: 100%; }
+.lb-foot { display: grid; justify-items: center; gap: 12px; padding: 4px 24px 26px; text-align: center; }
+.lb-foot b { font-size: 16px; font-weight: 500; }
+.lb-foot p { color: var(--body); max-width: 52ch; margin-top: 2px; }
+.lb-ask { display: inline-flex; align-items: center; gap: 12px; max-width: 100%; padding: 12px 12px 12px 16px; border-radius: 12px; background: var(--code); color: var(--code-ink); font: 13px var(--mono); }
+.lb-ask code { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.lb-ask i { font-style: normal; color: var(--accent); }
 
-/* How to use */
-.how-pills { width: min(1040px, 100%); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: -28px; }
-.how-pills button { border: 0; border-radius: 99px; padding: 6px 14px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font: 500 13.5px var(--sans); color: var(--secondary); transition: background-color .15s, color .15s, box-shadow .15s; }
-.how-pills button:hover { color: var(--ink); box-shadow: inset 0 0 0 1px var(--quaternary); }
-.how-pills button[aria-pressed="true"] { background: var(--ink); color: #fff; box-shadow: none; }
-.how-pills b, .ask b { color: #c2620a; font-weight: 400; }
-.how-pills button[aria-pressed="true"] b { color: #ffb36b; }
-.sk { padding: 22px; gap: 20px; }
-.step-h { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--tertiary); margin-bottom: 10px; }
-.step-h i { font-style: normal; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--raised); font: 500 11px var(--mono); color: var(--secondary); }
-.ask { display: inline-block; max-width: 100%; padding: 11px 13px; border-radius: 10px; background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); font: 13.5px/1.5 var(--mono); }
-.ask i { font-style: normal; color: var(--quaternary); }
-.sk-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.sk-row button { padding: 0; border: 0; background: none; text-align: left; }
-.sk-row .f { position: relative; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; transition: box-shadow .2s; }
-.sk-row stick-scene { display: block; width: 100%; height: 110px; pointer-events: none; }
-.sk-row button > span { display: flex; gap: 8px; margin-top: 7px; font-size: 13px; color: var(--tertiary); }
-.sk-row button > span em { font-style: normal; margin-left: auto; opacity: 0; }
-.sk-row button:hover .f { box-shadow: inset 0 0 0 1px var(--quaternary); }
-.sk-row button:hover > span { color: var(--secondary); }
-.sk-row button[aria-pressed="true"] .f { box-shadow: inset 0 0 0 2px var(--ink); }
-.sk-row button[aria-pressed="true"] > span { color: var(--ink); }
-.sk-row button[aria-pressed="true"] > span em { opacity: 1; }
-.sk-row.auto button[aria-pressed="true"] .f::after { content: ''; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: var(--accent); transform-origin: left; animation: how-tick var(--cycle, 8s) linear forwards; }
-@keyframes how-tick { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-.sk-big { border-radius: 12px; box-shadow: inset 0 0 0 1px var(--line); }
-.sk-big stick-scene { display: block; width: 100%; height: 320px; }
-
-/* Anywhere tabs */
-.tabs { grid-template-columns: 220px minmax(0, 1fr); }
-.tab-list { display: grid; align-content: start; gap: 2px; padding: 12px; border-right: 1px solid var(--line); }
-.tab-list button { text-align: left; border: 0; background: none; color: var(--tertiary); font-size: 14px; padding: 8px 12px; border-radius: 8px; white-space: nowrap; transition: color .15s, background-color .15s; }
-.tab-list button:hover { color: var(--ink); }
-.tab-list button[aria-selected="true"] { background: var(--raised); color: var(--ink); box-shadow: var(--control); }
-.tab-body { padding: 20px; display: grid; gap: 16px; align-content: start; }
-.win { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff; }
-.win-bar { display: flex; gap: 6px; align-items: center; padding: 9px 12px; border-bottom: 1px solid var(--line); background: var(--bg); }
-.win-bar i { width: 9px; height: 9px; border-radius: 50%; background: oklch(0.9 0 0); }
-.win-bar span { margin-left: 8px; padding: 3px 10px; border-radius: 6px; background: #fff; box-shadow: inset 0 0 0 1px var(--line); font: 12px var(--mono); color: var(--tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pg { position: relative; height: 380px; overflow: hidden; }
-.pg h4, .pg h5, .pg ul { margin: 0; }
-.pg small { font: 11.5px var(--mono); color: var(--quaternary); }
-.pg h4 { font-size: 21px; line-height: 1.2; font-weight: 600; letter-spacing: -0.3px; }
-.pg h5 { font-size: 16px; font-weight: 600; }
-.pg p { font-size: 13px; color: var(--tertiary); }
-.ln { height: 7px; border-radius: 4px; background: oklch(0.94 0 0); }
-.pg .sc stick-scene { display: block; width: 100%; height: 170px; }
-.pg.doc { padding: 24px 40px; display: grid; align-content: start; gap: 10px; }
-.pg.doc .sc { margin: 4px 0; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); }
-.pg .by { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--tertiary); }
-.pg .by i { width: 20px; height: 20px; border-radius: 50%; background: oklch(0.9 0.05 75); }
-.pg .figcap { font-size: 12px; color: var(--tertiary); font-style: italic; }
-.pg.app { display: grid; grid-template-columns: 150px minmax(0, 1fr); }
-.pg.app aside { display: grid; align-content: start; gap: 2px; padding: 14px 10px; border-right: 1px solid var(--line); background: var(--bg); font-size: 13px; color: var(--tertiary); }
-.pg.app aside > * { padding: 6px 10px; border-radius: 6px; }
-.pg.app aside b { background: #fff; box-shadow: var(--control); color: var(--ink); font-weight: 500; }
-.pg .center { display: grid; justify-items: center; align-content: center; gap: 6px; padding: 20px; text-align: center; height: 100%; }
-.pg .center .sc { width: min(440px, 100%); }
-.pbar { width: 220px; height: 6px; margin-top: 6px; border-radius: 3px; background: oklch(0.94 0 0); overflow: hidden; }
-.pbar i { display: block; height: 100%; width: 40%; border-radius: 3px; background: var(--ink); animation: pbar 3.2s ease-in-out infinite; }
-@keyframes pbar { 0% { width: 8%; } 100% { width: 96%; } }
-.btn-s { margin-top: 6px; padding: 6px 14px; border-radius: 7px; background: #fff; box-shadow: var(--control); font-size: 13px; font-weight: 500; }
-.btn-s.dark { background: var(--ink); color: #fff; }
-.pg.dim::before { content: ''; position: absolute; inset: 0; z-index: 1; background: oklch(0.145 0 0 / 0.28); }
-.pg .modal { position: absolute; z-index: 2; left: 50%; top: 50%; width: min(440px, 88%); transform: translate(-50%, -50%); display: grid; justify-items: center; gap: 6px; padding: 18px 20px 20px; border-radius: 14px; background: #fff; box-shadow: 0 20px 40px oklch(0.145 0 0 / 0.18); text-align: center; }
-.pg .modal .sc { width: 100%; }
-.pg .modal .sc stick-scene { height: 150px; }
-.fill { font-size: 13.5px; line-height: 2; color: var(--secondary); }
-.fill u { display: inline-block; width: 90px; border-bottom: 1.5px solid var(--ink); text-decoration: none; vertical-align: -2px; }
-.ing { margin: 0; padding-left: 18px; columns: 2; font-size: 13.5px; line-height: 1.7; color: var(--secondary); }
-.tab-text { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
-.tab-text h3 { font-size: 16px; font-weight: 500; }
-.tab-text p { color: var(--tertiary); font-size: 14px; }
-.tab-text a { font-size: 14px; color: var(--tertiary); text-decoration: none; white-space: nowrap; }
-.tab-text a:hover { color: var(--ink); }
-
-/* Examples grid */
-.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 12px; }
-.cell { position: relative; display: grid; gap: 6px; border: 0; padding: 0 0 12px; background: var(--panel); border-radius: 12px; box-shadow: inset 0 0 0 1px var(--line); text-align: left; overflow: hidden; transition: box-shadow .2s; }
-.cell:hover { box-shadow: inset 0 0 0 1.5px var(--ink); }
-.cell stick-scene { display: block; width: 100%; height: 150px; pointer-events: none; }
-.cell { text-decoration: none; color: inherit; }
-.cell span { padding: 0 12px; font-size: 13.5px; font-weight: 500; color: var(--ink); }
-.cell code { padding: 0 12px; font: 11.5px/1.45 var(--mono); color: var(--quaternary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.ex-chips { margin-bottom: -28px; }
-.ex-chips em { font-style: normal; font: 11.5px var(--mono); color: var(--quaternary); margin-left: 2px; }
-.ex-chips button[aria-pressed="true"] em { color: oklch(0.708 0 0); }
-.ex-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 20px; }
-.ex-foot [hidden] { display: none; }
-.cell:hover span { color: var(--ink); }
-.grid-note { margin-top: 12px; text-align: center; font-size: 13px; color: var(--quaternary); }
-
-/* Count */
-.count { width: min(960px, 100%); display: grid; justify-items: center; gap: 28px; padding: 48px 32px 40px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
-.sum { display: flex; align-items: flex-start; justify-content: center; flex-wrap: wrap; gap: 8px 0; }
-.term { display: grid; justify-items: center; gap: 10px; min-width: 170px; }
-.term b { font-size: 64px; line-height: 1; font-weight: 600; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
-.term span { color: var(--tertiary); font-size: 15px; }
-.sum .op { font-size: 40px; line-height: 1; color: var(--quaternary); margin-top: 10px; padding: 0 4px; }
-.total { display: grid; justify-items: center; gap: 12px; padding-top: 28px; border-top: 1px solid var(--line); width: 100%; text-align: center; }
-.total .op { font-size: 32px; line-height: 1; color: var(--quaternary); }
-.total b { font-size: 76px; line-height: 1; font-weight: 600; letter-spacing: -0.04em; background: linear-gradient(90deg, var(--ink), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.total > span:last-child { color: var(--tertiary); font-size: 15px; max-width: 360px; }
-
-/* Closing */
-.close-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; border-radius: 24px; }
-.close-l { display: grid; gap: 14px; padding: 48px 0 48px 48px; }
-.close-l h2 { font-size: 32px; line-height: 38px; font-weight: 500; letter-spacing: -0.6px; }
-.close-l > p { font-size: 16px; color: var(--tertiary); max-width: 400px; }
-.close-form { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 6px 6px 12px; border-radius: 10px; background: #fff; box-shadow: inset 0 0 0 1.5px var(--ink); font: 13px/1.5 var(--mono); color: var(--quaternary); }
-.close-form span { white-space: nowrap; }
-.close-form input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: 13px/1.5 var(--mono); color: var(--ink); padding: 4px 0; }
-.close-form input::placeholder { color: var(--quaternary); }
-.close-form button { flex: none; height: 30px; padding: 0 12px; border: 0; border-radius: 7px; background: var(--ink); color: #fff; font: 500 12.5px var(--sans); }
-.close-install { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 13px; color: var(--tertiary); }
-.btn.sm { height: 32px; padding: 0 12px; font-size: 12.5px; }
-.close-r { padding: 24px 24px 24px 0; }
-.close-r stick-scene { display: block; width: 100%; height: 280px; }
-
-footer { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 24px 16px 48px; font-size: 13px; color: var(--quaternary); }
-footer a { text-decoration: none; }
+footer { width: min(1040px, 100%); margin: 96px auto 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; padding-block: 20px 40px; font-size: 13px; color: var(--muted); }
 footer a:hover { color: var(--ink); }
 
-@media (max-width: 860px) {
-  main { gap: 96px; }
-  .hero { margin-bottom: 0; }
-  .hq-top { grid-template-columns: minmax(0, 1fr); }
-  .top nav a:not(:last-child):not(:first-child) { display: none; }
-  .hq-slot stick-scene { height: 165px; }
-  .hq-stage { padding-top: 0; }
-  .hq-head > span:last-child { display: none; }
-  .hq-steps { min-height: 0; }
-  .hq-stage:not(.custom) .hq-steps { display: none; }
-  .cta .btn { max-width: 100%; }
-  .cta .btn.code { font-size: 12.5px; padding: 0 14px; }
-  .btn.code span { overflow: hidden; text-overflow: ellipsis; }
-  .close-card { grid-template-columns: minmax(0, 1fr); }
-  .close-l { padding: 32px 24px 8px; }
-  .close-l h2 { font-size: 26px; line-height: 32px; }
-  .close-form span { display: none; }
-  .close-r { padding: 0 16px 16px; }
-  .close-r stick-scene { height: 220px; }
-  .hq-pbar span { display: none; }
-  .hq-stage { padding: 8px 24px 22px; }
-  .intro { padding: 36px 24px 8px; }
-  .intro h1 { font-size: 34px; line-height: 38px; }
-  .intro .lede { font-size: 21px; line-height: 27px; }
-  .tabs { grid-template-columns: minmax(0, 1fr); }
-  .sk { padding: 16px; }
-  .sk-row { gap: 6px; }
-  .sk-row stick-scene { height: 64px; }
-  .sk-row button > span { font-size: 11.5px; line-height: 1.3; }
-  .sk-big stick-scene { height: 220px; }
-  .pg { height: 340px; }
-  .pg.doc { padding: 18px 18px; }
-  .pg.app { grid-template-columns: minmax(0, 1fr); }
-  .pg.app aside { display: none; }
-  .tab-list { grid-auto-flow: column; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .cell stick-scene { height: 100px; }
-  .cell code { font-size: 10.5px; }
-  .term { min-width: 120px; }
-  .term b { font-size: 48px; }
-  .total b { font-size: 56px; }
+@media (max-width: 720px) {
+  .plate { padding-top: 56px; }
+  .plate h1 { font-size: 19px; }
+  .plate .sub { font-size: 15.5px; }
+  .stage, .stage stick-scene { height: 210px; }
+  .pills button { height: 32px; padding: 0 13px; font-size: 13.5px; }
+  .install { font-size: 12.5px; padding-left: 12px; }
+  .ex { margin-top: 88px; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+  .cell stick-scene { height: 120px; }
+  .cell code { font-size: 11px; }
+  .lb-body { grid-template-columns: minmax(0, 1fr); padding: 0; }
+  .lb-body > .icon { display: none; }
+  .lb-stage, .lb-stage stick-scene { height: 230px; }
+  .lb-foot { padding-inline: 16px; }
+  .lb-nav-sm { display: flex !important; }
 }
+.lb-nav-sm { display: none; gap: 8px; }
+.lb-nav-sm .icon { width: 40px; height: 40px; background: var(--pill); }
+@media (prefers-reduced-motion: reduce) { .slide, .lb[open] { transition: none; animation: none; } .pills.auto button[aria-pressed="true"]::before { animation: none; } }
 </style>
 </head>
 <body>
-<header class="top"><a class="top-brand" href="index.html">stick-scene</a><nav aria-label="Site"><a href="gallery.html">Gallery</a><a href="uses.html">Example pages</a><a href="start.html">Get started</a><a href="https://github.com/nilbuild/stick-scene">GitHub</a></nav></header>
-<main>
-  <section class="hero wide" id="hero">
-    <div class="hq-top">
-      <div class="intro">
-        <h1>stick-scene</h1>
-        <p class="lede">Describe an idea in one line. <b>Your agent draws it as a little scene.</b></p>
-        <div class="cta">
-          <button type="button" class="btn primary code" data-copy="npx skills add nilbuild/stick-scene"><span>npx skills add nilbuild/stick-scene</span></button>
-          <a class="btn" href="https://github.com/nilbuild/stick-scene"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
-        </div>
-        <p class="meta">No dependencies · MIT</p>
-      </div>
-      <div class="hq-stage">
-        <div class="hq-slot" data-hq-slot></div>
-        <form class="hq-pbar" data-hq-form><i>›</i><span>/stick-scene</span><input id="idea" aria-label="Describe what you want to explain" autocomplete="off" spellcheck="false" data-hq-input><button type="button" class="hq-try" data-hq-try aria-label="Write your own" title="Write your own"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2.5l2.5 2.5L6 12.5 3 13l.5-3z"/></svg></button><button type="submit" class="hq-copy" data-hq-copy>Copy</button></form>
-        <div class="hq-steps" data-hq-steps><span><b>1</b>Install</span><span><b>2</b>Paste into your agent</span><span><b>3</b>Pick a sketch</span><button type="button" data-hq-back>← Examples</button></div>
-      </div>
-    </div>
-    <div class="hq-lower">
-      <div class="hq-head"><span><b><span data-count-num></span> examples</b>, one prompt each · hover to stop, click to watch</span><span>yours can be about anything</span></div>
-      <div class="hq-wrap"><div class="hq-track" data-hq-track></div></div>
-    </div>
+<main id="top">
+  <section class="plate" aria-label="stick-scene">
+    <h1><span>/</span>stick-scene</h1>
+    <p class="sub">A skill for coding agents that turns one line into a little hand-drawn scene for your page.</p>
+    <nav class="links"><a href="https://github.com/nilbuild/stick-scene"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a><a href="#examples">Examples</a></nav>
+    <div class="stage slide" data-stage aria-live="polite"></div>
+    <div class="pills auto" data-pills aria-label="Pick an example"></div>
+    <div class="install"><b>$</b><code>npx skills add nilbuild/stick-scene</code><button type="button" class="copy" data-copy-install aria-label="Copy install command"><svg class="i-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5"/><path d="M10.5 5V3.5A1.5 1.5 0 0 0 9 2H3.5A1.5 1.5 0 0 0 2 3.5V9a1.5 1.5 0 0 0 1.5 1.5H5"/></svg><svg class="i-done" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></button></div>
+    <p class="note">Then ask your agent: <code>/stick-scene</code> and what it should explain.</p>
   </section>
 
-  <section class="section">
-    <div class="lead col"><h2>How to use it.</h2><p>Ask in one line. It sketches a few ideas, you pick one, and it draws it properly.</p></div>
-    <div class="how-pills" data-how-pills></div>
-    <div class="panel sk wide">
-      <div><div class="step-h"><i>1</i>You ask</div><div class="ask" data-how-ask></div></div>
-      <div><div class="step-h"><i>2</i>It sketches a few ideas</div><div class="sk-row auto" data-how-row></div></div>
-      <div><div class="step-h"><i>3</i>You pick one, it draws it properly</div><div class="sk-big" data-how-big></div></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="lead col"><h2>Anywhere.</h2><p>Lessons, memos, empty states, onboarding. Not just landing pages.</p></div>
-    <div class="with-more wide">
-      <div class="panel tabs">
-        <div class="tab-list" role="tablist" aria-label="Places to use a scene" data-tabs></div>
-        <div class="tab-body">
-          <div class="win"><div class="win-bar"><i></i><i></i><i></i><span data-win-url></span></div><div data-win></div></div>
-          <div class="tab-text"><div><h3 data-tab-title></h3><p data-tab-text></p></div><a data-tab-link href="#">See it on a page →</a></div>
-        </div>
-      </div>
-      <a class="more" href="uses.html">Every example page <span>→</span></a>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="lead col"><h2>Examples.</h2><p><span data-count></span> scenes so far, each from one line. Hover to play, click to open.</p></div>
-    <div class="how-pills ex-chips" data-ex-chips></div>
-    <div class="with-more wide">
-      <div class="grid" data-grid></div>
-      <div class="ex-foot"><button type="button" class="btn" data-ex-more>Show more</button><a class="more" href="gallery.html">Open the gallery <span>→</span></a></div>
-    </div>
-  </section>
-
-  <section class="closing wide">
-    <div class="panel close-card">
-      <div class="close-l">
-        <h2>What should yours explain?</h2>
-        <p>Say it in one line. Your agent pitches a few ways to draw it and puts the one you pick on your page.</p>
-        <form class="close-form" data-close-form><i>›</i><span>/stick-scene</span><input data-close-input aria-label="What should your scene explain?" autocomplete="off" spellcheck="false"><button type="submit" data-close-copy>Copy</button></form>
-        <div class="close-install"><span>First time? Install it once:</span><button type="button" class="btn code sm" data-copy="npx skills add nilbuild/stick-scene"><span>npx skills add nilbuild/stick-scene</span></button></div>
-      </div>
-      <div class="close-r"><stick-scene data-close-scene scene="site-your-idea" play="click" no-floor label="A stick figure at an easel with your idea written on it."></stick-scene></div>
-    </div>
+  <section class="ex" id="examples">
+    <div class="ex-head"><h2>Examples<span data-total></span></h2><div class="tabs" data-tabs></div></div>
+    <div class="grid" data-grid></div>
+    <button type="button" class="more" data-more>Show all</button>
   </section>
 </main>
-<footer><a href="gallery.html">Gallery</a><a href="uses.html">Example pages</a><a href="start.html">Get started</a><a href="https://github.com/nilbuild/stick-scene">GitHub</a><span>MIT · by <a href="https://kamran.fyi">Kamran Ahmed</a></span></footer>
+
+<dialog class="lb" data-lb aria-label="Example viewer" autofocus>
+  <div class="lb-top"><span data-lb-cat></span><span class="sp"></span><i data-lb-n></i><button type="button" class="icon" data-lb-close aria-label="Close"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+  <div class="lb-body">
+    <button type="button" class="icon" data-lb-prev aria-label="Previous example"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg></button>
+    <div class="lb-stage slide" data-lb-stage></div>
+    <button type="button" class="icon" data-lb-next aria-label="Next example"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg></button>
+  </div>
+  <div class="lb-foot">
+    <div class="slide" data-lb-text><b data-lb-title></b><p data-lb-blurb></p></div>
+    <div class="lb-ask"><code><i>/stick-scene</i> <span data-lb-prompt></span></code><button type="button" class="copy" data-lb-copy aria-label="Copy prompt"><svg class="i-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="5" y="5" width="8.5" height="8.5" rx="1.5"/><path d="M10.5 5V3.5A1.5 1.5 0 0 0 9 2H3.5A1.5 1.5 0 0 0 2 3.5V9a1.5 1.5 0 0 0 1.5 1.5H5"/></svg><svg class="i-done" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"/></svg></button></div>
+    <div class="lb-nav-sm"><button type="button" class="icon" data-lb-prev aria-label="Previous example"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg></button><button type="button" class="icon" data-lb-next aria-label="Next example"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg></button></div>
+  </div>
+</dialog>
+
+<footer><span>MIT · by <a href="https://kamran.fyi">Kamran Ahmed</a></span><a href="https://github.com/nilbuild/stick-scene">GitHub</a></footer>
 
 <script src="assets/catalog.js"></script>
-<script src="assets/site.js"></script>
 <script>
-  const S = window.SITE;
-  const { CATALOG } = window;
-  S.loadScenes([...window.sceneFiles(), 'site-your-idea.js']);
-  const words = (n) => {
-    const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-    const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-    if (n < 20) {
-      return ones[n];
-    }
-    if (n > 99) {
-      return String(n);
-    }
-    return tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '');
-  };
-  const countWord = words(CATALOG.length);
-  for (const el of document.querySelectorAll('[data-count]')) {
-    el.textContent = countWord.charAt(0).toUpperCase() + countWord.slice(1);
+(function () {
+  for (const f of ['stick.js', ...window.sceneFiles()]) {
+    const s = document.createElement('script');
+    s.src = 'scenes/' + f;
+    s.async = false;
+    document.head.appendChild(s);
   }
-  for (const el of document.querySelectorAll('[data-count-num]')) {
-    el.textContent = CATALOG.length;
-  }
+})();
+</script>
+<script>
+const CATALOG = window.CATALOG;
+const PROMPTS = window.PROMPTS;
+const byId = Object.fromEntries(CATALOG.map((s) => [s.id, s]));
+const catName = Object.fromEntries(window.CATEGORIES.map((c) => [c.id, c.name]));
+const INSTALL = 'npx skills add nilbuild/stick-scene';
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const promptFor = (id) => PROMPTS[id] || `show ${byId[id].title.toLowerCase()}`;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function scene(id, play, extra) {
-    const el = document.createElement('stick-scene');
-    el.setAttribute('scene', id);
-    el.setAttribute('play', play);
-    el.setAttribute('no-floor', '');
-    if (extra) {
-      Object.entries(extra).forEach(([k, v]) => el.setAttribute(k, v));
-    }
-    return el;
+function sc(id, play) {
+  const el = document.createElement('stick-scene');
+  el.setAttribute('scene', id);
+  el.setAttribute('play', play || 'click');
+  el.setAttribute('no-floor', '');
+  el.setAttribute('aria-label', `${byId[id].title}: ${byId[id].blurb}`);
+  return el;
+}
+function whenView(el, cb, n) {
+  if (!el.isConnected) {
+    return;
   }
-
-  for (const b of document.querySelectorAll('[data-copy]')) {
-    b.addEventListener('click', () => {
-      const span = b.querySelector('span');
-      const text = b.dataset.copy;
-      const orig = span.textContent;
-      if (!navigator.clipboard) {
-        return;
-      }
-      navigator.clipboard.writeText(text).then(() => {
-        span.textContent = 'Copied';
-        setTimeout(() => {
-          span.textContent = orig;
-        }, 1400);
-      }, () => {});
-    });
+  if (el.v) {
+    cb(el.v);
+    return;
   }
-
-  {
-  const PROMPTS = window.PROMPTS;
-  const promptFor = (id) => PROMPTS[id] || `show ${S.byId[id].title.toLowerCase()}`;
-  const ids = ['lesson-binary-search', 'how-photo-straw', 'how-rate-bouncer', 'learn-water-cycle', 'how-money-snowball', 'state-404', 'how-rollback-tape', 'lesson-cache', 'how-fractions-bar', 'idea-tech-debt', 'how-debt-weeds', 'p:yaml-sample', 'state-empty', 'how-photo-kitchen', 'mkt-newsletter', 'how-rate-turnstile', 'life-pancake', 'p:claude-queue', 'how-money-stack', 'money-savings'];
-
-  const input = document.querySelector('[data-hq-input]');
-  const stage = document.querySelector('.hq-stage');
-  const slot = document.querySelector('[data-hq-slot]');
-  let cur = 0, token = 0, custom = false, typing = 0;
-
-  function qScene(id, play) {
-    const el = document.createElement('stick-scene');
-    el.setAttribute('scene', id);
-    el.setAttribute('play', play || 'idle');
-    el.setAttribute('no-floor', '');
-    return el;
+  if ((n || 0) > 900) {
+    return;
   }
-  function typeExample(text) {
-    cancelAnimationFrame(typing);
-    const start = performance.now();
-    const step = (now) => {
-      if (custom) {
-        return;
-      }
-      const n = Math.min(text.length, Math.floor((now - start) / 24));
-      input.value = text.slice(0, n);
-      if (n < text.length) {
-        typing = requestAnimationFrame(step);
-      }
-    };
-    typing = requestAnimationFrame(step);
-  }
-  function show(i) {
-    custom = false;
-    cur = (i + ids.length) % ids.length;
-    const id = ids[cur];
-    stage.classList.remove('custom');
-    input.placeholder = '';
-    for (const b of document.querySelectorAll('.hq-thumb[data-id]')) {
-      b.setAttribute('aria-current', String(b.dataset.id === id));
-    }
-    typeExample(promptFor(id));
-    const el = qScene(id);
-    slot.replaceChildren(el);
-    const t = ++token;
-    S.whenView(el, (v) => {
-      setTimeout(() => {
-        if (t !== token) {
+  requestAnimationFrame(() => whenView(el, cb, (n || 0) + 1));
+}
+function playOnce(el) {
+  return new Promise((res) => {
+    whenView(el, (v) => {
+      v.on = false;
+      v.paused = false;
+      v.play();
+      const wait = () => {
+        if (!el.isConnected || !v.on) {
+          res();
           return;
         }
-        v.on = false;
-        v.paused = false;
-        v.play();
-        const wait = () => {
-          if (!el.isConnected || t !== token) {
-            return;
-          }
-          if (v.on) {
-            requestAnimationFrame(wait);
-            return;
-          }
-          setTimeout(() => {
-            if (t === token && !custom) {
-              show(cur + 1);
-            }
-          }, 1000);
-        };
         requestAnimationFrame(wait);
-      }, 700);
+      };
+      requestAnimationFrame(wait);
     });
-  }
-  function yours() {
-    custom = true;
-    token++;
-    cancelAnimationFrame(typing);
-    stage.classList.add('custom');
-    window.STICK_IDEA = input.value;
-    if (!slot.querySelector('stick-scene[scene="site-your-idea"]')) {
-      slot.replaceChildren(qScene('site-your-idea', 'click'));
-    }
-    for (const b of document.querySelectorAll('.hq-thumb[data-id]')) {
-      b.setAttribute('aria-current', 'false');
-    }
-  }
-  input.addEventListener('focus', () => {
-    if (!custom) {
-      input.value = '';
-      input.placeholder = 'describe what you want to explain';
-    }
-    yours();
   });
-  input.addEventListener('input', yours);
-  document.querySelector('[data-hq-back]').addEventListener('click', () => {
-    show(cur);
-  });
-  document.querySelector('[data-hq-try]').addEventListener('click', () => {
-    input.focus();
-  });
-  const copyBtn = document.querySelector('[data-hq-copy]');
-  document.querySelector('[data-hq-form]').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = `/stick-scene ${input.value.trim() || 'describe what you want to explain'}`;
+}
+function wireCopy(btn, getText) {
+  btn.addEventListener('click', () => {
     if (!navigator.clipboard) {
       return;
     }
-    const sc = slot.querySelector('stick-scene');
-    if (sc) {
-      S.whenView(sc, (v) => {
-        if (!v.on) {
-          v.play();
+    navigator.clipboard.writeText(getText()).then(() => {
+      btn.classList.add('done');
+      setTimeout(() => {
+        btn.classList.remove('done');
+      }, 1400);
+    }, () => {
+      const r = document.createRange();
+      r.selectNodeContents(btn.previousElementSibling);
+      getSelection().removeAllRanges();
+      getSelection().addRange(r);
+    });
+  });
+}
+async function slide(nodes, dir, fn) {
+  if (reduce || !dir) {
+    fn();
+    return;
+  }
+  const out = dir > 0 ? 'out-l' : 'out-r';
+  const inn = dir > 0 ? 'in-l' : 'in-r';
+  nodes.forEach((n) => n.classList.add(out));
+  await sleep(280);
+  fn();
+  nodes.forEach((n) => {
+    n.classList.remove(out);
+    n.classList.add(inn);
+  });
+  void nodes[0].offsetWidth;
+  nodes.forEach((n) => n.classList.remove(inn));
+}
+
+wireCopy(document.querySelector('[data-copy-install]'), () => INSTALL);
+
+/* Plate: topic pills pick the scene */
+(function () {
+  const TOPICS = [
+    ['lesson-binary-search', 'Binary search'],
+    ['how-rollback-tape', 'Rollbacks'],
+    ['how-rate-bouncer', 'Rate limiting'],
+    ['lesson-cache', 'Caching'],
+    ['idea-tech-debt', 'Tech debt'],
+    ['diffity-start', 'Getting started'],
+    ['p:typingwise', 'Voice typing'],
+  ];
+  const stage = document.querySelector('[data-stage]');
+  const pills = document.querySelector('[data-pills]');
+  pills.innerHTML = TOPICS.map(([id, label]) => `<button type="button" aria-pressed="false"><span>${esc(label)}</span></button>`).join('');
+  const btns = [...pills.children];
+  let cur = -1, token = 0, auto = true;
+
+  async function show(i, dir) {
+    const t = ++token;
+    cur = (i + TOPICS.length) % TOPICS.length;
+    const id = TOPICS[cur][0];
+    btns.forEach((b, k) => b.setAttribute('aria-pressed', 'false'));
+    void pills.offsetWidth;
+    await slide([stage], dir, () => {
+      stage.replaceChildren(sc(id));
+    });
+    if (t !== token) {
+      return;
+    }
+    const dur = ((window.STICK && window.STICK.SCENES[id] && window.STICK.SCENES[id].dur) || 5) * 1000 + 2400;
+    pills.style.setProperty('--t', `${dur}ms`);
+    btns[cur].setAttribute('aria-pressed', 'true');
+    await sleep(600);
+    if (t !== token) {
+      return;
+    }
+    await playOnce(stage.firstChild);
+    if (t !== token || !auto) {
+      return;
+    }
+    await sleep(1500);
+    if (t === token && auto) {
+      show(cur + 1, 1);
+    }
+  }
+  const pick = (k) => {
+    auto = false;
+    pills.classList.remove('auto');
+    if (k !== cur) {
+      show(k, k > cur ? 1 : -1);
+      return;
+    }
+    playOnce(stage.firstChild);
+  };
+  btns.forEach((b, k) => b.addEventListener('click', () => pick(k)));
+  let sx = null;
+  stage.addEventListener('pointerdown', (e) => {
+    sx = e.clientX;
+  });
+  stage.addEventListener('pointerup', (e) => {
+    if (sx === null) {
+      return;
+    }
+    const dx = e.clientX - sx;
+    sx = null;
+    if (Math.abs(dx) > 40) {
+      pick((cur + (dx < 0 ? 1 : -1) + TOPICS.length) % TOPICS.length);
+    }
+  });
+  show(0, 0);
+})();
+
+/* Viewer: an enlarged scene you can step through */
+const viewer = (function () {
+  const dlg = document.querySelector('[data-lb]');
+  const stage = dlg.querySelector('[data-lb-stage]');
+  const text = dlg.querySelector('[data-lb-text]');
+  let list = [], cur = 0, token = 0;
+  function render(id) {
+    const m = byId[id];
+    stage.replaceChildren(sc(id));
+    dlg.querySelector('[data-lb-title]').textContent = m.title;
+    dlg.querySelector('[data-lb-blurb]').textContent = m.blurb;
+    dlg.querySelector('[data-lb-prompt]').textContent = promptFor(id);
+    dlg.querySelector('[data-lb-cat]').textContent = catName[m.cat];
+    dlg.querySelector('[data-lb-n]').textContent = `${cur + 1} / ${list.length}`;
+  }
+  async function go(i, dir) {
+    const t = ++token;
+    cur = (i + list.length) % list.length;
+    await slide([stage, text], dir, () => render(list[cur]));
+    await sleep(350);
+    if (t === token && dlg.open) {
+      playOnce(stage.firstChild);
+    }
+  }
+  for (const b of dlg.querySelectorAll('[data-lb-prev]')) {
+    b.addEventListener('click', () => go(cur - 1, -1));
+  }
+  for (const b of dlg.querySelectorAll('[data-lb-next]')) {
+    b.addEventListener('click', () => go(cur + 1, 1));
+  }
+  dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg) {
+      dlg.close();
+    }
+  });
+  dlg.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      go(cur + 1, 1);
+    }
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      go(cur - 1, -1);
+    }
+  });
+  dlg.addEventListener('close', () => {
+    token++;
+    stage.replaceChildren();
+  });
+  let sx = null;
+  stage.addEventListener('pointerdown', (e) => {
+    sx = e.clientX;
+  });
+  stage.addEventListener('pointerup', (e) => {
+    if (sx === null) {
+      return;
+    }
+    const dx = e.clientX - sx;
+    sx = null;
+    if (Math.abs(dx) > 40) {
+      go(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    }
+  });
+  wireCopy(dlg.querySelector('[data-lb-copy]'), () => `/stick-scene ${promptFor(list[cur])}`);
+  return {
+    open(ids, i) {
+      list = ids;
+      if (!dlg.open) {
+        dlg.showModal();
+      }
+      go(i, 0);
+    },
+  };
+})();
+
+/* Examples grid */
+(function () {
+  const all = CATALOG.map((c) => c.id);
+  const tabs = document.querySelector('[data-tabs]');
+  const grid = document.querySelector('[data-grid]');
+  const more = document.querySelector('[data-more]');
+  const STEP = 12;
+  let cat = 'all', open = false;
+  document.querySelector('[data-total]').textContent = all.length;
+  const cats = [{ id: 'all', name: 'All' }, ...window.CATEGORIES];
+  tabs.innerHTML = cats.map((c) => `<button type="button" data-cat="${c.id}" aria-pressed="${c.id === 'all'}">${c.name}${c.id === 'all' ? '' : `<em>${all.filter((id) => byId[id].cat === c.id).length}</em>`}</button>`).join('');
+  function render() {
+    const list = cat === 'all' ? all : all.filter((id) => byId[id].cat === cat);
+    const shown = open ? list : list.slice(0, STEP);
+    grid.innerHTML = shown.map((id) => `<button type="button" class="cell" data-id="${esc(id)}" aria-label="Open ${esc(byId[id].title)}"><div class="f"><stick-scene scene="${esc(id)}" play="idle" no-floor></stick-scene></div><b>${esc(byId[id].title)}</b><code>${esc(promptFor(id))}</code></button>`).join('');
+    more.hidden = list.length <= STEP || open;
+    more.textContent = `Show all ${list.length}`;
+    [...grid.children].forEach((c, i) => {
+      const el = c.querySelector('stick-scene');
+      c.addEventListener('pointerenter', () => {
+        if (el.v) {
+          el.v.hover = true;
+          el.v.play();
         }
       });
-    }
-    navigator.clipboard.writeText(text).then(() => {
-      copyBtn.textContent = 'Copied';
-      setTimeout(() => {
-        copyBtn.textContent = 'Copy';
-      }, 1400);
-    }, () => {});
-  });
-
-  const stripIds = CATALOG.map((s) => s.id).slice(0, 24);
-  const items = [];
-  stripIds.forEach((id, i) => {
-    items.push(`<button type="button" class="hq-thumb" data-id="${id}"><div class="f"><stick-scene scene="${id}" play="idle" no-floor></stick-scene></div><span>${S.byId[id].title}</span></button>`);
-    if (i % 8 === 5) {
-      items.push('<button type="button" class="hq-thumb yours"><div class="f"><div><em>+</em>your idea</div></div><span>Describe it in one line</span></button>');
-    }
-  });
-  const track = document.querySelector('[data-hq-track]');
-  track.innerHTML = items.join('') + items.join('');
-  for (const b of track.children) {
-    b.addEventListener('click', () => {
-      if (b.classList.contains('yours')) {
-        input.focus();
-        return;
-      }
-      const id = b.dataset.id;
-      const at = ids.indexOf(id);
-      if (at >= 0) {
-        show(at);
-        return;
-      }
-      ids.push(id);
-      show(ids.length - 1);
-    });
-  }
-  show(0);
-  }
-
-  {
-  const HOW = [
-    { chip: 'Fractions', p: 'explain <b>fractions</b> for my kids\' maths page', ideas: [['Slice a pizza, sneak a slice', 'how-fractions-pizza'], ['A jug that runs dry at the last cup', 'how-fractions-jug'], ['A bird steals a piece of chocolate', 'how-fractions-bar']] },
-    { chip: 'Photosynthesis', p: 'explain <b>photosynthesis</b> for a year 5 science page', ideas: [['A plant with a straw and sunglasses', 'how-photo-straw'], ['The leaf is a kitchen', 'how-photo-kitchen'], ['Leaves like solar panels', 'how-photo-solar']] },
-    { chip: 'Rollback', p: 'show a <b>rollback</b> saving a bad deploy', ideas: [['Wind the tape back with a pencil', 'how-rollback-tape'], ['Heave the big lever back to v42', 'how-rollback-lever'], ['Bin the smoking crate', 'how-rollback-swap']] },
-    { chip: 'Rate limiting', p: 'show how our API <b>rate limiting</b> works', ideas: [['A bouncer at the door', 'how-rate-bouncer'], ['A bucket of tokens', 'how-rate-bucket'], ['A one-a-second turnstile', 'how-rate-turnstile']] },
-    { chip: 'Tech debt', p: 'why we should pay down <b>tech debt</b>', ideas: [['Weeds that sneak back', 'how-debt-weeds'], ['A tower of quick fixes nearly falls', 'how-debt-tower'], ['A backpack full of hacks', 'how-debt-backpack']] },
-    { chip: 'Compound interest', p: 'explain <b>compound interest</b> for my savings blog', ideas: [['A snowball rolling downhill', 'how-money-snowball'], ['A stack that keeps doubling', 'how-money-stack'], ['A coin that grows a grove', 'how-money-tree']] },
-  ];
-  const pills = document.querySelector('[data-how-pills]');
-  const ask = document.querySelector('[data-how-ask]');
-  const row = document.querySelector('[data-how-row]');
-  const big = document.querySelector('[data-how-big]');
-  const CYCLE = 8000;
-  let cp = -1, ck = 0, timer = 0, seen = false, auto = true;
-  function pressed(root, i) {
-    [...root.children].forEach((b, k) => {
-      b.setAttribute('aria-pressed', 'false');
-      if (k === i) {
-        void b.offsetWidth;
-        b.setAttribute('aria-pressed', 'true');
-      }
-    });
-  }
-  function idea(k) {
-    ck = k;
-    pressed(row, k);
-    big.replaceChildren(scene(HOW[cp].ideas[k][1], 'loop'));
-    clearTimeout(timer);
-    if (auto && seen) {
-      timer = setTimeout(() => {
-        if (ck < 2) {
-          idea(ck + 1);
-          return;
+      c.addEventListener('pointerleave', () => {
+        if (el.v) {
+          el.v.hover = false;
         }
-        prompt((cp + 1) % HOW.length);
-      }, CYCLE);
-    }
-  }
-  function prompt(i) {
-    if (i !== cp) {
-      cp = i;
-      const d = HOW[i];
-      pressed(pills, i);
-      ask.innerHTML = `<i>/stick-scene</i> ${d.p}`;
-      row.innerHTML = d.ideas.map(([t, id]) => `<button type="button"><div class="f"><stick-scene scene="${id}" play="idle" no-floor></stick-scene></div><span>${t}<em>✓</em></span></button>`).join('');
-      [...row.children].forEach((b, k) => b.addEventListener('click', () => {
-        stop();
-        idea(k);
-      }));
-    }
-    idea(0);
-  }
-  function stop() {
-    auto = false;
-    row.classList.remove('auto');
-    clearTimeout(timer);
-  }
-  row.style.setProperty('--cycle', `${CYCLE}ms`);
-  pills.innerHTML = HOW.map((d) => `<button type="button">${d.chip}</button>`).join('');
-  [...pills.children].forEach((b, i) => b.addEventListener('click', () => {
-    stop();
-    prompt(i);
-  }));
-  new IntersectionObserver((entries) => {
-    seen = entries[0].isIntersecting;
-    clearTimeout(timer);
-    if (seen && auto) {
-      idea(ck);
-    }
-  }, { threshold: 0.3 }).observe(big);
-  prompt(0);
-  }
-
-  const ln = (w) => `<div class="ln" style="width:${w}%"></div>`;
-  const side = (on, items) => `<aside>${items.map((x) => (x === on ? `<b>${x}</b>` : `<span>${x}</span>`)).join('')}</aside>`;
-  const tabs = [
-    ['Lessons', 'lesson-cache', 'learn.algo.club/lesson-3', 'A course page, where the figure is the explanation.', 'uses/teaching.html',
-      `<div class="pg doc"><small>Lesson 3 · Systems</small><h4>Why a cache is fast</h4>${ln(94)}${ln(82)}<div class="sc" data-sc></div><p class="figcap">Fig. 1: the second ask never reaches the database.</p>${ln(88)}${ln(70)}</div>`],
-    ['Memos', 'idea-tech-debt', 'docs.acme.dev/proposals/fix-it-week', 'A proposal that makes its case before anyone reads it.', 'uses/memo.html',
-      `<div class="pg doc"><small>Proposal · 4 min read</small><h4>Let's take a fix-it week</h4><div class="by"><i></i>Staff engineer, platform team</div>${ln(90)}<div class="sc" data-sc></div>${ln(86)}${ln(64)}</div>`],
-    ['Empty states', 'state-empty', 'mail.acme.app/inbox', 'An empty inbox that feels like a reward.', 'uses/app.html',
-      `<div class="pg app">${side('Inbox', ['Inbox', 'Starred', 'Sent', 'Archive'])}<div class="center"><div class="sc" data-sc></div><h5>You're all caught up</h5><p>New mail will show up here.</p></div></div>`],
-    ['Loading', 'state-loading', 'acme.app/import', 'A wait that gives people something to watch.', 'uses/app.html',
-      `<div class="pg app">${side('Imports', ['Dashboard', 'Imports', 'Reports', 'Settings'])}<div class="center"><div class="sc" data-sc></div><h5>Importing 2,431 rows</h5><div class="pbar"><i></i></div></div></div>`],
-    ['Errors', 'state-404', 'acme.app/settngs', 'A 404 that points people home with a smile.', 'uses/app.html',
-      `<div class="pg"><div class="center"><div class="sc" data-sc></div><h4>We looked everywhere.</h4><p>That page isn't here. Maybe a typo?</p><span class="btn-s">Back home</span></div></div>`],
-    ['Onboarding', 'diffity-start', 'acme.app/welcome', 'A welcome that shows the first steps instead of listing them.', 'gallery.html#product',
-      `<div class="pg app dim">${side('Home', ['Home', 'Projects', 'Team'])}<div></div><div class="modal"><small>Step 1 of 3</small><h5>Welcome! Here's how it works</h5><div class="sc" data-sc></div><span class="btn-s dark">Get started</span></div></div>`],
-    ['Science', 'learn-water-cycle', 'class.school/science/water-cycle', 'A worksheet kids actually look at.', 'gallery.html#learn',
-      `<div class="pg doc"><small>Year 4 Science · Worksheet</small><h4>The water cycle</h4><div class="sc" data-sc></div><div class="fill">1. The sun heats the sea and water <u></u>.<br>2. It cools into clouds and <u></u>.</div></div>`],
-    ['Recipes', 'life-pancake', 'sundaykitchen.blog/pancakes', 'A recipe that shows the flip.', 'gallery.html#life',
-      `<div class="pg doc"><small>Breakfast · 20 min · serves 4</small><h4>Sunday pancakes</h4><div class="sc" data-sc></div><ul class="ing"><li>2 eggs</li><li>1 cup flour</li><li>1 cup milk</li><li>A pinch of salt</li></ul></div>`],
-  ];
-  const tl = document.querySelector('[data-tabs]');
-  tl.innerHTML = tabs.map(([n], i) => `<button type="button" role="tab" id="tab-${i}" aria-selected="${i === 0}">${n}</button>`).join('');
-  function showTab(i) {
-    const [, id, url, text, href, html] = tabs[i];
-    for (const [k, b] of [...tl.children].entries()) {
-      b.setAttribute('aria-selected', String(k === i));
-    }
-    document.querySelector('[data-win-url]').textContent = url;
-    const win = document.querySelector('[data-win]');
-    win.innerHTML = html;
-    win.querySelector('[data-sc]').replaceChildren(scene(id, id === 'state-loading' ? 'loop' : 'view'));
-    document.querySelector('[data-tab-title]').textContent = S.byId[id].title;
-    document.querySelector('[data-tab-text]').textContent = text;
-    document.querySelector('[data-tab-link]').href = href;
-  }
-  for (const [i, b] of [...tl.children].entries()) {
-    b.addEventListener('click', () => showTab(i));
-  }
-  showTab(0);
-
-  {
-  const first = ['p:github actions video', 'p:db-playground', 'mkt-newsletter', 'idea-compounding', 'p:sendy', 'p:gitkot', 'p:claude-queue', 'p:yaml-sample'];
-  const allIds = [...first, ...CATALOG.map((c) => c.id).filter((id) => !first.includes(id))];
-  const STEP = 8;
-  const chips = document.querySelector('[data-ex-chips]');
-  const grid = document.querySelector('[data-grid]');
-  const more = document.querySelector('[data-ex-more]');
-  const cats = [{ id: 'all', name: 'All' }, ...window.CATEGORIES];
-  let list = allIds, shown = 0;
-  function card(id) {
-    const meta = S.byId[id];
-    const b = document.createElement('a');
-    b.className = 'cell';
-    b.href = 'gallery.html#' + encodeURIComponent(id);
-    b.setAttribute('aria-label', `${meta.title}: ${meta.blurb}`);
-    const el = scene(id, 'idle');
-    b.appendChild(el);
-    b.insertAdjacentHTML('beforeend', `<span>${meta.title}</span><code>/stick-scene ${PROMPTS[id] || ''}</code>`);
-    b.addEventListener('pointerenter', () => {
-      if (el.v) {
-        el.v.hover = true;
-        el.v.play();
-      }
+      });
+      c.addEventListener('click', () => viewer.open(list, i));
     });
-    b.addEventListener('pointerleave', () => {
-      if (el.v) {
-        el.v.hover = false;
+  }
+  for (const b of tabs.children) {
+    b.addEventListener('click', () => {
+      cat = b.dataset.cat;
+      open = false;
+      for (const x of tabs.children) {
+        x.setAttribute('aria-pressed', String(x === b));
       }
+      render();
     });
-    return b;
   }
-  function showMore() {
-    const next = list.slice(shown, shown + STEP);
-    for (const id of next) {
-      grid.appendChild(card(id));
-    }
-    shown += next.length;
-    more.hidden = shown >= list.length;
-  }
-  function filter(cat) {
-    list = cat === 'all' ? allIds : allIds.filter((id) => S.byId[id].cat === cat);
-    [...chips.children].forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.cat === cat)));
-    grid.replaceChildren();
-    shown = 0;
-    showMore();
-  }
-  chips.innerHTML = cats.map((c) => {
-    const n = c.id === 'all' ? allIds.length : allIds.filter((id) => S.byId[id].cat === c.id).length;
-    return `<button type="button" data-cat="${c.id}">${c.name} <em>${n}</em></button>`;
-  }).join('');
-  for (const b of chips.children) {
-    b.addEventListener('click', () => filter(b.dataset.cat));
-  }
-  more.addEventListener('click', showMore);
-  filter('all');
-  }
-
-  {
-  const IDEAS = ['how our refund flow works', 'why sleep helps you learn', 'what happens when you push to main', 'how a vaccine trains your body', 'our onboarding in three steps', 'why we split the monolith'];
-  const el = document.querySelector('[data-close-scene]');
-  const input = document.querySelector('[data-close-input]');
-  const btn = document.querySelector('[data-close-copy]');
-  let view = null, k = 0, n = 0, dir = 1, timer = 0;
-  const setIdea = (t) => {
-    if (view) {
-      view.st.idea = t;
-    }
-  };
-  function tick() {
-    if (input.value || document.activeElement === input) {
-      return;
-    }
-    const idea = IDEAS[k];
-    n += dir;
-    setIdea(idea.slice(0, n));
-    input.placeholder = idea.slice(0, n);
-    let wait = 45;
-    if (n >= idea.length) {
-      dir = -1;
-      wait = 2200;
-    } else if (n <= 0) {
-      dir = 1;
-      k = (k + 1) % IDEAS.length;
-      wait = 400;
-    } else if (dir < 0) {
-      wait = 18;
-    }
-    timer = setTimeout(tick, wait);
-  }
-  S.whenView(el, (v) => {
-    view = v;
-    tick();
+  more.addEventListener('click', () => {
+    open = true;
+    render();
   });
-  input.addEventListener('focus', () => {
-    clearTimeout(timer);
-    input.placeholder = 'describe what you want to explain';
-    setIdea(input.value);
-  });
-  input.addEventListener('input', () => setIdea(input.value));
-  input.addEventListener('blur', () => {
-    if (!input.value) {
-      n = 0;
-      dir = 1;
-      tick();
-    }
-  });
-  document.querySelector('[data-close-form]').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = `/stick-scene ${input.value.trim() || IDEAS[k]}`;
-    if (view && !view.on) {
-      view.play();
-    }
-    if (!navigator.clipboard) {
-      return;
-    }
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = 'Copied';
-      setTimeout(() => {
-        btn.textContent = 'Copy';
-      }, 1400);
-    }, () => {});
-  });
-  }
+  render();
+})();
 </script>
 </body>
 </html>
