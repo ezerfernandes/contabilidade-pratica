@@ -2,7 +2,7 @@
 (function(){
   const SC=(window.SCENES=window.SCENES||{}),R=window.RIG;
   const {C,E,P,mix,legs,fig,inkFill,rr,ln,text,seg,breathe,pulse,lp,sparks,tickBadge,lerp}=R;
-  const BOARD={x:4,y:-158,w:154,h:115},ME=-92,INK='#1f6b55',RED='#e65d3b';
+  const BOARD={x:4,y:-158,w:154,h:115},ME=-25,INK='#1f6b55',RED='#e65d3b';
   function board(g,fill,done){
     ln(g,BOARD.x+20,BOARD.y+BOARD.h,BOARD.x+15,0,2.2);
     ln(g,BOARD.x+BOARD.w-20,BOARD.y+BOARD.h,BOARD.x+BOARD.w-15,0,2.2);
@@ -38,7 +38,7 @@
         const fade=1-seg(T,5.9,6.4);
         fill=lerp(.18,1,E.soft(seg(T,.45,3.05)))*fade+.18*(1-fade);
         const point=E.soft(seg(T,.4,.8))*(1-E.soft(seg(T,2.55,2.85)));
-        pose=mix(pose,P({hF:lp([BOARD.x+55,BOARD.y+63],ME,0,1),hB:[-4,-54],head:[9,-115]}),point);
+        pose=mix(pose,P({hF:lp([BOARD.x+5,BOARD.y+63],ME,0,1),hB:[-4,-54],head:[9,-115]}),point);
         const slam=E.soft(seg(T,3.05,3.35))*(1-E.soft(seg(T,3.75,4.05)));
         pose=mix(pose,P({hF:[23,-126],hB:[-4,-55],head:[6,-117]}),slam);
         stampK=seg(T,3.35,3.62)*fade;done=seg(T,3.52,3.92)*fade;

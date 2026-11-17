@@ -18,6 +18,7 @@
     <nav aria-label="Navegação principal">
       <a href="#fundamentos">Fundamentos</a>
       <a href="#simulador">Simulador</a>
+      <a href="#cfc">Trilha CFC</a>
       <a href="#metricas">Métricas</a>
     </nav>
     <a class="button button-small" href="#simulador">Calcular meu cenário</a>
@@ -169,6 +170,206 @@
       </div>
     </section>
 
+    <section class="cfc-section" id="cfc">
+      <div class="cfc-hero">
+        <div class="cfc-copy">
+          <p class="eyebrow">Trilha CFC</p>
+          <h2>A contabilidade por trás da decisão.</h2>
+          <p>Um mapa de revisão dos conceitos que conectam fatos contábeis, demonstrações, custos, finanças, perícia e controle. Abra cada caderno e siga a lógica — não decore palavras soltas.</p>
+          <div class="norm-note">
+            <strong>Base técnica</strong>
+            <span>Conteúdo educacional alinhado às NBCs e aos CPCs consultados em novembro de 2026. Para aplicação profissional, confirme vigência, transição e norma específica da entidade.</span>
+          </div>
+        </div>
+        <div class="cfc-scene scene-frame">
+          <span class="scene-kicker">Do lançamento ao relatório</span>
+          <stick-scene scene="ledger-inspector" play="view" no-font label="Uma contadora registra um lançamento no livro razão e transforma os saldos em Balanço Patrimonial, DRE e DFC." style="height:290px"></stick-scene>
+        </div>
+      </div>
+
+      <nav class="cfc-index" aria-label="Índice da Trilha CFC">
+        <a href="#cfc-geral"><span>01</span>Geral</a>
+        <a href="#cfc-demonstracoes"><span>02</span>Demonstrações</a>
+        <a href="#cfc-escrituracao"><span>03</span>Escrituração</a>
+        <a href="#cfc-custos"><span>04</span>Custos</a>
+        <a href="#cfc-financeira"><span>05</span>Mat. financeira</a>
+        <a href="#cfc-pericia"><span>06</span>Perícia + controle</a>
+      </nav>
+
+      <div class="cfc-notebooks">
+        <details class="cfc-book" id="cfc-geral" open>
+          <summary><span>01</span><div><small>Contabilidade Geral</small><strong>Reconhecer, mensurar e representar</strong></div><i>abrir</i></summary>
+          <div class="book-content">
+            <div class="book-lead">
+              <p>Contabilidade geral identifica os eventos que alteram o patrimônio, decide <em>se</em> e <em>por quanto</em> registrá-los e comunica os efeitos em demonstrações contábeis.</p>
+              <div class="equation"><span>equação patrimonial</span><strong>Ativo = Passivo + Patrimônio Líquido</strong></div>
+            </div>
+            <div class="concept-grid">
+              <article>
+                <span class="concept-tag">Reconhecimento</span>
+                <h3>Quando entra na contabilidade?</h3>
+                <p><strong>Ativo</strong> é recurso econômico presente controlado pela entidade como resultado de eventos passados. <strong>Passivo</strong> é obrigação presente de transferir recurso econômico, também decorrente de eventos passados.</p>
+                <p>O item é reconhecido quando sua inclusão produz informação relevante e representação fidedigna — observando a norma aplicável e a relação custo-benefício.</p>
+              </article>
+              <article>
+                <span class="concept-tag">Mensuração</span>
+                <h3>Por qual valor?</h3>
+                <p>As bases podem olhar para a transação original, como o <strong>custo histórico</strong>, ou para condições atuais, como valor justo, valor em uso e custo corrente. A escolha não é livre: depende da natureza do item e da NBC/CPC aplicável.</p>
+              </article>
+              <article>
+                <span class="concept-tag">Provisões</span>
+                <h3>Obrigação estimada não é “reserva”.</h3>
+                <p>Reconhece-se provisão quando existe obrigação presente, é provável a saída de recursos e há estimativa confiável. Se o desembolso for apenas possível, em regra trata-se como passivo contingente e pode haver divulgação, não reconhecimento.</p>
+                <code>NBC TG 25 (R2) · CPC 25</code>
+              </article>
+              <article>
+                <span class="concept-tag">Consumo do ativo</span>
+                <h3>Depreciação, amortização e exaustão</h3>
+                <ul>
+                  <li><strong>Depreciação:</strong> alocação do valor depreciável de ativo tangível ao longo da vida útil.</li>
+                  <li><strong>Amortização:</strong> lógica equivalente para intangível de vida útil definida.</li>
+                  <li><strong>Exaustão:</strong> reconhecimento do consumo de recursos naturais, conforme a extração.</li>
+                </ul>
+                <p>São apropriações de custo/despesa; não representam uma nova saída de caixa no momento do registro.</p>
+              </article>
+              <article class="wide">
+                <span class="concept-tag">Avaliação patrimonial</span>
+                <h3>O valor contábil precisa continuar fazendo sentido.</h3>
+                <p>Depois do reconhecimento inicial, itens podem exigir depreciação ou amortização, teste de recuperabilidade, mensuração a valor justo ou outros ajustes. O <strong>ajuste a valor presente (AVP)</strong> separa o componente financeiro de valores a receber ou pagar de longo prazo — e também de curto prazo quando o efeito for relevante.</p>
+                <div class="mini-formula"><strong>Valor presente</strong><span>valor futuro ÷ (1 + taxa)<sup>tempo</sup></span></div>
+                <code>NBC TG 12 (R1) · CPC 12 (R1)</code>
+              </article>
+            </div>
+          </div>
+        </details>
+
+        <details class="cfc-book" id="cfc-demonstracoes">
+          <summary><span>02</span><div><small>Demonstrações Contábeis</small><strong>Posição, desempenho e dinheiro</strong></div><i>abrir</i></summary>
+          <div class="book-content">
+            <div class="statement-flow">
+              <article><b>BP</b><span>uma data</span><h3>Balanço Patrimonial</h3><p>Fotografia dos ativos, passivos e patrimônio líquido. Mostra estrutura financeira, liquidez, capital investido e obrigações.</p><strong>O que a entidade tem, deve e acumulou?</strong></article>
+              <article><b>DRE</b><span>um período</span><h3>Demonstração do Resultado</h3><p>Confronta receitas e despesas pelo regime de competência para explicar lucro ou prejuízo do período.</p><strong>A operação criou resultado econômico?</strong></article>
+              <article><b>DFC</b><span>um período</span><h3>Demonstração dos Fluxos de Caixa</h3><p>Organiza entradas e saídas em atividades operacionais, de investimento e de financiamento.</p><strong>Por que o caixa aumentou ou diminuiu?</strong></article>
+            </div>
+            <div class="exam-callout">
+              <strong>Conexão que cai em prova e na vida real</strong>
+              <p>Lucro não é caixa: uma venda a prazo pode gerar receita na DRE antes do recebimento na DFC. O direito a receber aparece no BP. As três demonstrações contam o mesmo fato por ângulos diferentes.</p>
+            </div>
+            <p class="norm-line"><strong>Apresentação:</strong> NBC TG 51, correlata ao CPC 51/IFRS 18. <strong>Fluxos de caixa:</strong> NBC TG 03 (R3). Observe as regras de vigência e transição aplicáveis à entidade.</p>
+          </div>
+        </details>
+
+        <details class="cfc-book" id="cfc-escrituracao">
+          <summary><span>03</span><div><small>Escrituração Contábil</small><strong>Da evidência ao balancete</strong></div><i>abrir</i></summary>
+          <div class="book-content">
+            <div class="ledger-steps">
+              <article><span>1</span><strong>Documento</strong><p>Identifique o fato, a data, as partes e a evidência idônea.</p></article>
+              <article><span>2</span><strong>Lançamento</strong><p>Defina contas, histórico, valor, débito e crédito.</p></article>
+              <article><span>3</span><strong>Razão</strong><p>Agrupe movimentações e apure o saldo de cada conta.</p></article>
+              <article><span>4</span><strong>Balancete</strong><p>Confira igualdade e investigue saldos ou classificações incomuns.</p></article>
+              <article><span>5</span><strong>Demonstrações</strong><p>Classifique, agregue, apresente e divulgue informações relevantes.</p></article>
+            </div>
+            <div class="double-entry">
+              <div><span>Método das partidas dobradas</span><strong>Todo débito tem crédito correspondente.</strong></div>
+              <div class="debit-credit"><b>Σ Débitos</b><i>=</i><b>Σ Créditos</b></div>
+            </div>
+            <p>A escrituração deve ser uniforme, tempestiva, individualizada e apoiada em documentação. O Livro Diário registra os fatos em ordem cronológica; o Razão mostra a movimentação por conta. A norma-base é a <strong>ITG 2000 (R1)</strong>; para formalidades digitais do SPED, consulte também a <strong>CTG 2001 (R3)</strong>.</p>
+          </div>
+        </details>
+
+        <details class="cfc-book" id="cfc-custos">
+          <summary><span>04</span><div><small>Contabilidade de Custos</small><strong>Do recurso consumido ao CPV</strong></div><i>abrir</i></summary>
+          <div class="book-content">
+            <div class="cost-matrix">
+              <div class="matrix-corner"></div><strong>Direto ao produto</strong><strong>Indireto ao produto</strong>
+              <strong>Comportamento fixo</strong><p>Ex.: depreciação específica de máquina dedicada.</p><p>Ex.: aluguel e supervisão da fábrica.</p>
+              <strong>Comportamento variável</strong><p>Ex.: matéria-prima e embalagem unitária.</p><p>Ex.: energia comum de produção, quando varia com o volume.</p>
+            </div>
+            <div class="cost-methods">
+              <article>
+                <span>Custeio por absorção</span>
+                <h3>Todo custo de produção é absorvido.</h3>
+                <p>Custos fixos e variáveis de fabricação compõem o custo dos produtos. A parcela dos itens não vendidos permanece no estoque; a dos vendidos vai ao CPV.</p>
+                <em>Foco: mensuração de estoque e resultado contábil.</em>
+              </article>
+              <article>
+                <span>Custeio variável</span>
+                <h3>O produto recebe os custos variáveis.</h3>
+                <p>Custos fixos de fabricação são tratados como gasto do período na análise gerencial. Evidencia margem de contribuição e apoia decisões de curto prazo.</p>
+                <em>Foco: comportamento, decisão e ponto de equilíbrio.</em>
+              </article>
+            </div>
+            <div class="cpv-band">
+              <span>Apuração simplificada</span>
+              <strong>CPV = estoque inicial + custo da produção acabada ou compras − estoque final</strong>
+              <small>Em indústria, o fluxo também passa por matéria-prima, produção em processo e produtos acabados.</small>
+            </div>
+            <div class="allocation">
+              <h3>Rateio de custos indiretos</h3>
+              <p>Agrupe o custo indireto em centros ou pools e escolha uma base com relação causal ou benefício recebido — horas-máquina, horas de mão de obra, área ocupada ou número de setups, por exemplo.</p>
+              <div><span>pool de custos</span><i>÷</i><span>total da base</span><i>=</i><span>taxa de rateio</span><i>×</i><span>consumo do objeto</span></div>
+              <small>Rateio arbitrário distorce produto, margem e decisão. Consistência não corrige uma base sem sentido econômico.</small>
+            </div>
+          </div>
+        </details>
+
+        <details class="cfc-book" id="cfc-financeira">
+          <summary><span>05</span><div><small>Matemática Financeira</small><strong>O valor do dinheiro no tempo</strong></div><i>abrir</i></summary>
+          <div class="book-content">
+            <div class="finance-cards">
+              <article><span>Juros simples</span><strong>J = C × i × n</strong><p>Os juros de cada período incidem apenas sobre o capital inicial.</p><code>M = C × (1 + i × n)</code></article>
+              <article><span>Juros compostos</span><strong>M = C × (1 + i)<sup>n</sup></strong><p>Cada período incorpora os juros ao saldo; há “juros sobre juros”.</p><code>J = M − C</code></article>
+              <article><span>Fluxo de caixa descontado</span><strong>VP = Σ FC<sub>t</sub> ÷ (1 + k)<sup>t</sup></strong><p>Converte fluxos futuros em valor presente por uma taxa compatível com tempo e risco.</p><code>VPL = VP dos fluxos − investimento</code></article>
+            </div>
+            <div class="exam-callout">
+              <strong>Regra de ouro</strong>
+              <p>Taxa e tempo precisam usar a mesma unidade. Antes de calcular, desenhe a linha do tempo, marque os sinais das entradas e saídas e identifique se a pergunta quer capital, juros, montante, valor presente ou taxa.</p>
+            </div>
+          </div>
+        </details>
+
+        <details class="cfc-book" id="cfc-pericia">
+          <summary><span>06</span><div><small>Perícia + Controladoria</small><strong>Prova técnica e gestão de desempenho</strong></div><i>abrir</i></summary>
+          <div class="book-content split-topics">
+            <article>
+              <span class="concept-tag">Perícia Contábil</span>
+              <h3>Conhecimento contábil aplicado à prova.</h3>
+              <p>A perícia utiliza procedimentos técnico-científicos para esclarecer matéria contábil em ambiente judicial ou extrajudicial. O trabalho parte do objeto e dos quesitos, pode envolver diligências, exame, vistoria, indagação, investigação, arbitramento, mensuração, avaliação e certificação, e culmina em documento tecnicamente fundamentado.</p>
+              <ul>
+                <li><strong>Perito do juízo:</strong> atua com imparcialidade e apresenta laudo pericial contábil.</li>
+                <li><strong>Assistente técnico:</strong> indicado pela parte, acompanha o trabalho e apresenta parecer pericial contábil.</li>
+                <li><strong>Princípios profissionais:</strong> competência, independência, zelo, sigilo, impedimento e suspeição.</li>
+              </ul>
+              <div class="norm-pill">NBC TP 01 (R2) · Perícia Contábil</div>
+              <div class="norm-pill">NBC PP 01 (R2) · Perito Contábil</div>
+            </article>
+            <article>
+              <span class="concept-tag">Controladoria</span>
+              <h3>Planejar, medir, explicar, corrigir.</h3>
+              <p>A controladoria integra contabilidade, finanças e operação para apoiar metas e decisões. Ela desenha o processo orçamentário, garante coerência das premissas, acompanha indicadores e traduz variações em ações.</p>
+              <div class="control-cycle">
+                <span>estratégia</span><i>→</i><span>orçamento</span><i>→</i><span>execução</span><i>→</i><span>análise</span><i>→</i><span>ação</span>
+              </div>
+              <ul>
+                <li><strong>Orçamento empresarial:</strong> plano quantificado de receitas, custos, despesas, investimentos e caixa.</li>
+                <li><strong>Forecast:</strong> nova estimativa do provável resultado com dados atualizados; não apaga a meta original.</li>
+                <li><strong>Análise de variações:</strong> separa efeito de volume, preço, mix, eficiência e prazo.</li>
+                <li><strong>Gestão de desempenho:</strong> combina indicadores financeiros e operacionais com responsáveis e cadência.</li>
+              </ul>
+            </article>
+          </div>
+        </details>
+      </div>
+
+      <div class="cfc-sources">
+        <strong>Leitura oficial recomendada</strong>
+        <a href="https://cfc.org.br/tecnica/normas-brasileiras-de-contabilidade/" target="_blank" rel="noreferrer">Normas Brasileiras de Contabilidade — CFC ↗</a>
+        <a href="https://cfc.org.br/tecnica/normas-brasileiras-de-contabilidade/nbc-tp-de-pericia/" target="_blank" rel="noreferrer">NBC TP — Perícia ↗</a>
+        <a href="https://cfc.org.br/tecnica/normas-brasileiras-de-contabilidade/nbc-pp-do-perito-contabil/" target="_blank" rel="noreferrer">NBC PP — Perito Contábil ↗</a>
+        <a href="https://www.cpc.org.br/CPC/Documentos-Emitidos/Pronunciamentos" target="_blank" rel="noreferrer">Pronunciamentos Técnicos — CPC ↗</a>
+      </div>
+    </section>
+
     <section class="metrics" id="metricas">
       <div class="section-heading">
         <p class="eyebrow">Painel mínimo viável</p>
@@ -220,6 +421,7 @@
   <script src="/scenes/cashflow-sorter.js" defer></script>
   <script src="/scenes/breakeven-stamp.js" defer></script>
   <script src="/scenes/funnel-builder.js" defer></script>
+  <script src="/scenes/ledger-inspector.js" defer></script>
   <script src="/assets/app.js" defer></script>
 </body>
 </html>

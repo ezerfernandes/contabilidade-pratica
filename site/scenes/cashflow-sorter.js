@@ -2,7 +2,7 @@
 (function(){
   const SC=(window.SCENES=window.SCENES||{}),R=window.RIG;
   const {C,E,P,mix,legs,walkSeg,fig,inkFill,rr,ln,text,seg,breathe,pulse,lp,sparks,tickBadge,circle,lerp}=R;
-  const M={x:8,y:-150,w:150,h:108},HOME=-150,AT=-42,LEVER=[3,-88];
+  const M={x:8,y:-150,w:150,h:108},HOME=-150,AT=-20,LEVER=[3,-88];
   const ACCENT='#e65d3b',GREEN='#1f6b55',BLUE='#3b6f8f';
   function machine(g,leverK,runK,doneK){
     ln(g,M.x+24,M.y+M.h,M.x+17,0,2.3);
@@ -38,7 +38,7 @@
         const ws=T<4.1?walkSeg(T,.05,.75,HOME,AT):walkSeg(T,5.25,6.15,AT,HOME);
         x=ws.x;gait=ws;
         const reach=E.soft(seg(T,.72,1.05))*(1-E.soft(seg(T,2.0,2.3)));
-        pose=mix(pose,P({hF:lp([LEVER[0]+20,LEVER[1]+8],x,0,1),hB:[-4,-54],head:[9,-114],chest:[4,-89]}),reach);
+        pose=mix(pose,P({hF:lp([LEVER[0]+6,LEVER[1]+8],x,0,1),hB:[-4,-54],head:[9,-114],chest:[4,-89]}),reach);
         leverK=E.soft(seg(T,1.05,1.55))*(1-seg(T,5.8,6.3));
         runK=seg(T,1.45,3.35)*fade;
         doneK=seg(T,3.3,3.72)*fade;

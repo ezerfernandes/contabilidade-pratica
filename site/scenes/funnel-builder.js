@@ -2,7 +2,7 @@
 (function(){
   const SC=(window.SCENES=window.SCENES||{}),R=window.RIG;
   const {C,E,P,mix,legs,fig,inkFill,rr,ln,text,seg,breathe,pulse,lp,sparks,circle,lerp,arcPt}=R;
-  const FUN={x:2,y:-156,w:152,h:105},ME=-105,CRANK=[-1,-88],RED='#e65d3b',GREEN='#1f6b55',BLUE='#3b6f8f';
+  const FUN={x:2,y:-156,w:152,h:105},ME=-25,CRANK=[-1,-88],RED='#e65d3b',GREEN='#1f6b55',BLUE='#3b6f8f';
   function funnel(g,crankK,scoreK){
     rr(g,FUN.x,FUN.y,FUN.w,FUN.h,8);inkFill(g,C.paper,1.7);
     text(g,'AQUISIÇÃO',FUN.x+FUN.w/2,FUN.y+16,8.5,C.umber);
