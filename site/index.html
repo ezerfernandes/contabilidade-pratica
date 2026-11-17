@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Contabilidade prática para empreendedores: caixa, margem, ponto de equilíbrio, CAC, ROAS e LTV em um guia visual e interativo.">
+  <meta name="description" content="Trilhas visuais de contabilidade e marketing digital para empreendedores: caixa, margem, CAC, ROAS, MRR, ARR, churn, NRR e conceitos do CFC.">
   <meta name="theme-color" content="#f4eddb">
   <title>Contabilidade Prática — números que ajudam a decidir</title>
   <link rel="stylesheet" href="/assets/styles.css">
@@ -16,7 +16,7 @@
       <span>contabilidade<br><strong>prática</strong></span>
     </a>
     <nav aria-label="Navegação principal">
-      <a href="#fundamentos">Fundamentos</a>
+      <a href="#trilha-negocio">Trilha Negócio</a>
       <a href="#simulador">Simulador</a>
       <a href="#cfc">Trilha CFC</a>
       <a href="#metricas">Métricas</a>
@@ -27,12 +27,12 @@
   <main id="conteudo">
     <section class="hero" id="topo">
       <div class="hero-copy">
-        <p class="eyebrow">Finanças + marketing, sem economês</p>
+        <p class="eyebrow">Duas trilhas, uma visão do negócio</p>
         <h1>Seu negócio em <span class="scribble">números.</span></h1>
-        <p class="hero-lead">Entenda o que entra, o que sobra e quanto custa crescer. Um guia visual para transformar dados do mês em decisões melhores.</p>
+        <p class="hero-lead">Aprenda Contabilidade + Marketing Digital para decidir e percorra a trilha CFC para dominar a base técnica. Tudo com cenas visuais, fórmulas e exemplos.</p>
         <div class="hero-actions">
           <a class="button" href="#simulador">Simular agora <span aria-hidden="true">↘</span></a>
-          <a class="text-link" href="#fundamentos">Aprender do zero <span aria-hidden="true">→</span></a>
+          <a class="text-link" href="#trilha-negocio">Começar a trilha <span aria-hidden="true">→</span></a>
         </div>
         <p class="hero-note"><span aria-hidden="true">●</span> Comece com estimativas. Troque por dados reais toda semana.</p>
       </div>
@@ -48,14 +48,24 @@
       </div>
     </section>
 
-    <section class="intro" id="fundamentos">
+    <section class="intro business-trail" id="trilha-negocio">
       <div class="section-heading">
-        <p class="eyebrow">A ordem certa</p>
-        <h2>Primeiro sobreviver.<br>Depois lucrar. Então crescer.</h2>
-        <p>As três camadas se conectam. Marketing não corrige margem ruim; lucro no papel não paga boleto sem caixa.</p>
+        <p class="eyebrow">Trilha 01 · Contabilidade + Marketing Digital</p>
+        <h2>Caixa, margem, aquisição, recorrência e retenção.</h2>
+        <p>Siga a ordem econômica do negócio. Marketing não corrige margem ruim; ARR não substitui receita contábil; crescimento sem retenção enche um balde furado.</p>
       </div>
+      <nav class="trail-index" aria-label="Índice da trilha Contabilidade e Marketing Digital">
+        <a href="#negocio-caixa"><span>01</span>Caixa</a>
+        <a href="#negocio-margem"><span>02</span>Margem</a>
+        <a href="#negocio-aquisicao"><span>03</span>Aquisição</a>
+        <a href="#negocio-arr"><span>04</span>MRR + ARR</a>
+        <a href="#negocio-churn"><span>05</span>Churn</a>
+        <a href="#negocio-nrr"><span>06</span>NRR</a>
+        <a href="#negocio-payback"><span>07</span>Payback</a>
+        <a href="#negocio-roas"><span>08</span>ROAS</a>
+      </nav>
       <div class="chapter-grid">
-        <article class="chapter">
+        <article class="chapter" id="negocio-caixa">
           <div class="chapter-number">1</div>
           <div class="chapter-scene scene-frame">
             <stick-scene scene="cashflow-sorter" play="click" no-font label="Uma empreendedora aciona uma máquina que separa as vendas entre custos, despesas e caixa." style="height:220px"></stick-scene>
@@ -70,7 +80,7 @@
           </ul>
         </article>
 
-        <article class="chapter">
+        <article class="chapter" id="negocio-margem">
           <div class="chapter-number">2</div>
           <div class="chapter-scene scene-frame">
             <stick-scene scene="breakeven-stamp" play="view" no-font label="Uma empreendedora carimba o ponto de equilíbrio quando a margem cobre os custos fixos." style="height:220px"></stick-scene>
@@ -81,7 +91,7 @@
           <div class="formula"><span>margem de contribuição</span><strong>receita − custos variáveis</strong></div>
         </article>
 
-        <article class="chapter">
+        <article class="chapter" id="negocio-aquisicao">
           <div class="chapter-number">3</div>
           <div class="chapter-scene scene-frame">
             <stick-scene scene="funnel-builder" play="view" no-font label="Uma empreendedora coloca visitantes em um funil e mede quantos clientes saem e quanto valor geram." style="height:220px"></stick-scene>
@@ -91,6 +101,105 @@
           <p>Volume sem economia unitária saudável acelera o problema. Compare CAC, valor do cliente e tempo de retorno antes de aumentar a verba.</p>
           <div class="formula"><span>LTV ÷ CAC</span><strong>valor do cliente ÷ custo de aquisição</strong></div>
         </article>
+      </div>
+
+      <div class="recurring-track">
+        <div class="recurring-heading">
+          <div>
+            <p class="eyebrow">Receita que volta</p>
+            <h3>Do primeiro pagamento à base que cresce sozinha.</h3>
+          </div>
+          <p>Estas métricas são especialmente úteis para SaaS, clubes, assinaturas e contratos recorrentes. Defina uma política consistente para upgrades, descontos, inadimplência e cancelamentos antes de comparar períodos.</p>
+        </div>
+
+        <div class="growth-grid">
+          <article class="growth-module featured" id="negocio-arr">
+            <div class="growth-scene scene-frame">
+              <span class="scene-kicker">12 meses na mesma régua</span>
+              <stick-scene scene="arr-stacker" play="view" no-font label="Uma empreendedora gira uma manivela que empilha doze blocos de receita recorrente mensal e forma a receita recorrente anualizada." style="height:250px"></stick-scene>
+            </div>
+            <div class="growth-copy">
+              <span class="module-number">04 · MRR + ARR</span>
+              <h3>Normalize a recorrência antes de anualizar.</h3>
+              <p><strong>MRR</strong> é a soma mensal normalizada das assinaturas recorrentes. <strong>ARR</strong> anualiza essa base para mostrar a velocidade recorrente em uma régua de 12 meses.</p>
+              <div class="metric-formula"><span>ARR</span><strong>MRR × 12</strong></div>
+              <p class="example-line">Exemplo: MRR de R$ 40 mil → ARR de R$ 480 mil.</p>
+              <div class="accounting-warning"><b>Não confunda:</b> ARR é métrica operacional prospectiva. Receita contábil segue o CPC 47 e o atendimento das obrigações de desempenho.</div>
+            </div>
+          </article>
+
+          <article class="growth-module" id="negocio-churn">
+            <div class="growth-scene scene-frame">
+              <span class="scene-kicker">O balde da base</span>
+              <stick-scene scene="churn-plug" play="view" no-font label="Uma gestora fecha o vazamento de um reservatório de clientes recorrentes para reduzir o churn." style="height:220px"></stick-scene>
+            </div>
+            <div class="growth-copy">
+              <span class="module-number">05 · Churn</span>
+              <h3>Meça o que saiu da base.</h3>
+              <p><strong>Churn de clientes</strong> divide cancelamentos pela base no início do período. <strong>Churn de MRR</strong> olha a receita perdida por cancelamentos e, conforme a política, contrações.</p>
+              <div class="metric-formula"><span>churn de clientes</span><strong>clientes perdidos ÷ base inicial</strong></div>
+              <p class="metric-pair"><b>Leia junto:</b> retenção, motivo de saída e coorte de entrada.</p>
+            </div>
+          </article>
+
+          <article class="growth-module" id="negocio-nrr">
+            <div class="growth-scene scene-frame">
+              <span class="scene-kicker">Reter e expandir</span>
+              <stick-scene scene="nrr-pump" play="view" no-font label="Uma controller bombeia receita de expansão para compensar contrações e churn e leva a retenção líquida acima de cem por cento." style="height:220px"></stick-scene>
+            </div>
+            <div class="growth-copy">
+              <span class="module-number">06 · NRR</span>
+              <h3>A base existente cresceu ou encolheu?</h3>
+              <p>A <strong>retenção líquida de receita</strong> acompanha a mesma base e inclui expansão, reativação, contração e churn. Pode superar 100% quando a expansão compensa as perdas.</p>
+              <div class="metric-formula compact"><span>NRR</span><strong>(MRR inicial + expansão + reativação − contração − churn) ÷ MRR inicial</strong></div>
+              <p class="metric-pair"><b>GRR:</b> exclui expansão e mostra apenas quanto da receita foi preservado.</p>
+            </div>
+          </article>
+
+          <article class="growth-module" id="negocio-payback">
+            <div class="growth-scene scene-frame">
+              <span class="scene-kicker">Quando o CAC volta</span>
+              <stick-scene scene="payback-calendar" play="view" no-font label="Uma empreendedora avança um calendário enquanto a margem mensal recupera o custo de aquisição do cliente." style="height:220px"></stick-scene>
+            </div>
+            <div class="growth-copy">
+              <span class="module-number">07 · Payback do CAC</span>
+              <h3>Conte meses, não apenas receita.</h3>
+              <p>O payback estima quanto tempo a <strong>margem bruta mensal</strong> de um novo cliente leva para recuperar o CAC. Receita sozinha superestima a velocidade de retorno.</p>
+              <div class="metric-formula"><span>meses de payback</span><strong>CAC ÷ margem bruta mensal por cliente</strong></div>
+              <p class="metric-pair"><b>Leia junto:</b> LTV/CAC, churn e necessidade de caixa para financiar crescimento.</p>
+            </div>
+          </article>
+
+          <article class="growth-module" id="negocio-roas">
+            <div class="growth-scene scene-frame">
+              <span class="scene-kicker">Retorno da mídia</span>
+              <stick-scene scene="roas-balance" play="view" no-font label="Uma gestora coloca investimento de mídia em uma balança e compara com o valor de conversão atribuído, sem confundir ROAS com lucro." style="height:220px"></stick-scene>
+            </div>
+            <div class="growth-copy">
+              <span class="module-number">08 · ROAS</span>
+              <h3>Receita atribuída não é lucro.</h3>
+              <p>ROAS compara <strong>valor de conversão atribuído</strong> à campanha com o gasto em mídia. Ele depende da atribuição e ignora custo do produto, equipe, impostos e outras despesas.</p>
+              <div class="metric-formula"><span>ROAS</span><strong>valor de conversão ÷ gasto em mídia</strong></div>
+              <p class="metric-pair"><b>Leia junto:</b> margem de contribuição, CAC, conversão e receita incremental.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="metric-dictionary">
+          <article><span>ARPA</span><strong>MRR ÷ contas ativas</strong><p>Receita recorrente média por conta.</p></article>
+          <article><span>New MRR</span><strong>novas assinaturas</strong><p>MRR trazido por clientes novos.</p></article>
+          <article><span>Expansion MRR</span><strong>upgrade + add-on</strong><p>Crescimento dentro da base existente.</p></article>
+          <article><span>Contraction MRR</span><strong>downgrade</strong><p>Redução sem cancelamento total.</p></article>
+        </div>
+
+        <div class="trail-sources">
+          <strong>Fontes e método</strong>
+          <a href="https://support.stripe.com/questions/understanding-monthly-recurring-revenue-%28mrr%29-and-annual-recurring-revenue-%28arr%29" target="_blank" rel="noreferrer">MRR e ARR — Stripe ↗</a>
+          <a href="https://chartmogul.com/saas-metrics/nrr/" target="_blank" rel="noreferrer">NRR — ChartMogul ↗</a>
+          <a href="https://stripe.com/resources/more/how-to-calculate-churn-rates" target="_blank" rel="noreferrer">Churn — Stripe ↗</a>
+          <a href="https://support.google.com/google-ads/answer/13064207" target="_blank" rel="noreferrer">Valor de conversão e ROAS — Google Ads ↗</a>
+          <a href="https://www.cpc.org.br/CPC/Documentos-Emitidos/Pronunciamentos/Pronunciamento?Id=105" target="_blank" rel="noreferrer">Receita de contrato — CPC 47 ↗</a>
+        </div>
       </div>
     </section>
 
@@ -173,7 +282,7 @@
     <section class="cfc-section" id="cfc">
       <div class="cfc-hero">
         <div class="cfc-copy">
-          <p class="eyebrow">Trilha CFC</p>
+          <p class="eyebrow">Trilha 02 · CFC</p>
           <h2>A contabilidade por trás da decisão.</h2>
           <p>Um mapa de revisão dos conceitos que conectam fatos contábeis, demonstrações, custos, finanças, perícia e controle. Abra cada caderno e siga a lógica — não decore palavras soltas.</p>
           <div class="norm-note">
@@ -452,7 +561,7 @@
     <section class="metrics" id="metricas">
       <div class="section-heading">
         <p class="eyebrow">Painel mínimo viável</p>
-        <h2>Os 10 números que merecem sua atenção.</h2>
+        <h2>Os 14 números que merecem sua atenção.</h2>
         <p>Não existe um “bom” percentual universal. Compare com sua meta, seu histórico e empresas de modelo semelhante.</p>
       </div>
       <div class="metric-table" role="table" aria-label="Métricas essenciais">
@@ -462,6 +571,10 @@
         <div class="metric-row" role="row"><strong role="cell">Ponto de equilíbrio</strong><span role="cell">Qual faturamento mínimo cobre a operação?</span><em role="cell">mensal</em></div>
         <div class="metric-row" role="row"><strong role="cell">Resultado operacional</strong><span role="cell">A atividade principal gera ou consome recursos?</span><em role="cell">mensal</em></div>
         <div class="metric-row" role="row"><strong role="cell">Capital de giro</strong><span role="cell">Há recursos para sustentar estoque, prazos e contas?</span><em role="cell">mensal</em></div>
+        <div class="metric-row" role="row"><strong role="cell">MRR / ARR</strong><span role="cell">Qual é a velocidade normalizada da receita recorrente?</span><em role="cell">mensal</em></div>
+        <div class="metric-row" role="row"><strong role="cell">Churn</strong><span role="cell">Quanto da base de clientes e da receita saiu no período?</span><em role="cell">por coorte</em></div>
+        <div class="metric-row" role="row"><strong role="cell">NRR / GRR</strong><span role="cell">A base existente cresceu e quanto dela foi preservado sem expansão?</span><em role="cell">mensal</em></div>
+        <div class="metric-row" role="row"><strong role="cell">ARPA</strong><span role="cell">Quanta receita recorrente cada conta ativa gera em média?</span><em role="cell">mensal</em></div>
         <div class="metric-row" role="row"><strong role="cell">Taxa de conversão</strong><span role="cell">Quantas oportunidades viram clientes?</span><em role="cell">por canal</em></div>
         <div class="metric-row" role="row"><strong role="cell">CAC</strong><span role="cell">Quanto custa conquistar um cliente novo?</span><em role="cell">por canal</em></div>
         <div class="metric-row" role="row"><strong role="cell">ROAS</strong><span role="cell">Quanta receita atribuída volta por real de mídia?</span><em role="cell">por campanha</em></div>
@@ -507,6 +620,11 @@
   <script src="/scenes/discount-timeline.js" defer></script>
   <script src="/scenes/forensic-stamp.js" defer></script>
   <script src="/scenes/budget-compass.js" defer></script>
+  <script src="/scenes/arr-stacker.js" defer></script>
+  <script src="/scenes/churn-plug.js" defer></script>
+  <script src="/scenes/nrr-pump.js" defer></script>
+  <script src="/scenes/payback-calendar.js" defer></script>
+  <script src="/scenes/roas-balance.js" defer></script>
   <script src="/assets/app.js" defer></script>
 </body>
 </html>
